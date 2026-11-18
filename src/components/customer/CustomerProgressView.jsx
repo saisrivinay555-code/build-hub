@@ -40,6 +40,7 @@ export default function CustomerProgressView() {
   const userRole = (currentUser?.role || '').toLowerCase();
   const isBuilder = userRole === 'builder';
   const isAdmin = userRole === 'admin' || userRole === 'administrator';
+  const canUpload = isBuilder || isAdmin;
 
   // Active Tab: 'images' | 'updates'
   const [activeTab, setActiveTab] = useState('images');
@@ -364,14 +365,16 @@ export default function CustomerProgressView() {
             </button>
           </div>
 
-          {/* Upload Images Button */}
-          <button
-            onClick={() => setIsUploadModalOpen(true)}
-            className="px-4 py-2 rounded-xl border border-[#7428E8] text-[#7428E8] hover:bg-purple-50 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer self-start sm:self-auto"
-          >
-            <UploadCloud size={17} className="stroke-[2.2]" />
-            <span>Upload Images</span>
-          </button>
+          {/* Upload Images Button (Only visible for Builder & Admin logins, completely hidden for Customers) */}
+          {canUpload && (
+            <button
+              onClick={() => setIsUploadModalOpen(true)}
+              className="px-4 py-2 rounded-xl border border-[#7428E8] text-[#7428E8] hover:bg-purple-50 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer self-start sm:self-auto"
+            >
+              <UploadCloud size={17} className="stroke-[2.2]" />
+              <span>Upload Images</span>
+            </button>
+          )}
         </div>
 
         {/* ──────── TAB 1: CONSTRUCTION IMAGES GALLERY ──────── */}
@@ -424,12 +427,14 @@ export default function CustomerProgressView() {
                     ? `No photographs uploaded under "${selectedStageFilter}". Try selecting "All Stages".`
                     : 'Your contractor will upload site photographs as each construction milestone is reached.'}
                 </p>
-                <button
-                  onClick={() => setIsUploadModalOpen(true)}
-                  className="mt-4 px-4 py-2 bg-gradient-to-r from-[#7428E8] to-[#9B5CFF] text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition cursor-pointer"
-                >
-                  Upload First Photo
-                </button>
+                {canUpload && (
+                  <button
+                    onClick={() => setIsUploadModalOpen(true)}
+                    className="mt-4 px-4 py-2 bg-gradient-to-r from-[#7428E8] to-[#9B5CFF] text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition cursor-pointer"
+                  >
+                    Upload First Photo
+                  </button>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
