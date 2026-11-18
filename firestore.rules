@@ -256,7 +256,22 @@ service cloud.firestore {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // 9. DEFAULT CATCH-ALL
+    // 9. PROJECT DOCUMENTS & BLUEPRINTS COLLECTION
+    // ─────────────────────────────────────────────────────────────
+    match /project_documents/{documentId} {
+      // Authenticated customers and builders can access documents for their project
+      allow read: if isAuthenticated();
+
+      // Only authenticated Builders and Admins can upload architectural plans, receipts, bills and agreements
+      allow create: if isBuilder() || isAdmin();
+
+      // Only the uploading Builder or Administrator can modify or delete documents
+      allow update, delete: if isAdmin() ||
+                               (isBuilder() && (resource.data.builderId == request.auth.uid || resource.data.builderEmail == request.auth.token.email));
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 10. DEFAULT CATCH-ALL
     // ─────────────────────────────────────────────────────────────
     // Deny all unauthenticated access and unknown collections
     match /{document=**} {

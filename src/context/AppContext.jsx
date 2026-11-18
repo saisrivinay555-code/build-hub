@@ -36,8 +36,12 @@ import {
   deleteConstructionImageFromFirestore,
   subscribeToConstructionImages,
   saveProgressUpdateToFirestore,
-  subscribeToProgressUpdates
+  subscribeToProgressUpdates,
+  saveProjectDocumentToFirestore,
+  deleteProjectDocumentFromFirestore,
+  subscribeToProjectDocuments
 } from '../services/firebase/firestoreService';
+import { INITIAL_PROJECT_DOCUMENTS } from '../data/documentsData';
 import { 
   seedInitialDataIfEmpty, 
   subscribeToProjects, 
@@ -185,6 +189,12 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : INITIAL_PROGRESS_UPDATES;
   });
 
+  // --- PROJECT DOCUMENTS, BLUEPRINTS, RECEIPTS & BILLS ---
+  const [projectDocuments, setProjectDocuments] = useState(() => {
+    const saved = localStorage.getItem('buildhub_project_documents_v5');
+    return saved ? JSON.parse(saved) : INITIAL_PROJECT_DOCUMENTS;
+  });
+
   // Modals & Popups
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -231,6 +241,10 @@ export function AppProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('buildhub_progress_updates_v5', JSON.stringify(progressUpdates));
   }, [progressUpdates]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_project_documents_v5', JSON.stringify(projectDocuments));
+  }, [projectDocuments]);
 
   // ─── FIREBASE REALTIME SYNC ───
   useEffect(() => {
@@ -302,6 +316,17 @@ export function AppProvider({ children }) {
       }
     });
 
+    // 8. Realtime listener for Project Documents
+    const unsubscribeDocs = subscribeToProjectDocuments(null, (remoteDocs) => {
+      if (remoteDocs && remoteDocs.length > 0) {
+        setProjectDocuments((prev) => {
+          const existingIds = new Set(remoteDocs.map(d => d.id));
+          const localOnly = prev.filter(d => !existingIds.has(d.id));
+          return [...remoteDocs, ...localOnly];
+        });
+      }
+    });
+
     return () => {
       unsubscribeProjects();
       unsubscribeBuilders();
@@ -310,6 +335,7 @@ export function AppProvider({ children }) {
       unsubscribeAuth();
       unsubscribeImgs();
       unsubscribeUpdates();
+      unsubscribeDocs();
     };
   }, [customerProject?.id]);
 
@@ -604,6 +630,50 @@ export function AppProvider({ children }) {
     });
   };
 
+  // --- PROJECT DOCUMENTS ACTIONS (House plans, receipts, bills, agreements) ---
+  const uploadProjectDocument = async (docData) => {
+    const builderName = currentUser?.role?.toLowerCase() === 'builder'
+      ? (currentUser?.name || currentUser?.company || 'Ravi Constructions')
+      : (customerProject?.builderName || 'Ravi Constructions');
+    const builderId = currentUser?.role?.toLowerCase() === 'builder'
+      ? (currentUser?.uid || 'b-ravi')
+      : (customerProject?.builderId || 'b-ravi');
+
+    const newDoc = {
+      id: 'pdoc_' + Date.now(),
+      projectId: docData.projectId || customerProject?.id || 'cp_ramesh_1',
+      customerId: customerProject?.customerId || 'cust-1',
+      builderId,
+      builderName,
+      title: docData.title || docData.name,
+      name: docData.title || docData.name,
+      category: docData.category || 'plans',
+      version: docData.version || 'Version 1.0',
+      date: docData.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+      amount: docData.amount || '',
+      status: docData.status || (docData.category === 'plans' ? 'GHMC Approved' : 'Verified'),
+      description: docData.description || '',
+      previewUrl: docData.previewUrl || '',
+      size: '2.4 MB',
+      createdAt: new Date().toISOString()
+    };
+
+    setProjectDocuments(prev => [newDoc, ...prev]);
+
+    saveProjectDocumentToFirestore(newDoc).catch(err => {
+      console.warn('Firestore document save notice:', err);
+    });
+
+    return newDoc;
+  };
+
+  const deleteProjectDocument = async (docId) => {
+    setProjectDocuments(prev => prev.filter(d => d.id !== docId));
+    deleteProjectDocumentFromFirestore(docId).catch(err => {
+      console.warn('Firestore document delete notice:', err);
+    });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -695,7 +765,12 @@ export function AppProvider({ children }) {
         progressUpdates,
         setProgressUpdates,
         uploadConstructionImages,
-        deleteConstructionImage
+        deleteConstructionImage,
+        // Project Documents, House Plans, Receipts & Bills
+        projectDocuments,
+        setProjectDocuments,
+        uploadProjectDocument,
+        deleteProjectDocument
       }}
     >
       {children}

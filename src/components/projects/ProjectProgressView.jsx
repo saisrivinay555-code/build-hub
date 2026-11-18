@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { TrendingUp, CheckCircle2, Circle, Clock, Save, ChevronRight, UploadCloud, X, CheckCircle, Image as ImageIcon } from 'lucide-react';
+import { TrendingUp, CheckCircle2, Circle, Clock, Save, ChevronRight, UploadCloud, X, CheckCircle, Image as ImageIcon, FileText } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import confetti from 'canvas-confetti';
+import BuilderDocumentUploadModal from '../common/BuilderDocumentUploadModal';
 
 export default function ProjectProgressView() {
   const { myProjects, updateProjectProgress, toggleProjectMilestone, uploadConstructionImages } = useApp();
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isDocUploadOpen, setIsDocUploadOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(myProjects[0]?.id || 'cp_ramesh_1');
   const [uploadStage, setUploadStage] = useState('Interior & Finishing');
   const [uploadDate, setUploadDate] = useState(
@@ -123,14 +125,25 @@ export default function ProjectProgressView() {
           </p>
         </div>
 
-        {/* Builder Upload Images Action */}
-        <button
-          onClick={() => setIsUploadModalOpen(true)}
-          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#7428E8] to-[#9B5CFF] hover:from-[#6415C5] hover:to-[#8B5CF6] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition cursor-pointer self-start sm:self-auto"
-        >
-          <UploadCloud size={17} className="stroke-[2.2]" />
-          <span>Upload Construction Images</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Builder Upload Document Action */}
+          <button
+            onClick={() => setIsDocUploadOpen(true)}
+            className="px-4 py-2.5 rounded-xl border border-[#7428E8] text-[#7428E8] hover:bg-purple-50 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition cursor-pointer self-start sm:self-auto"
+          >
+            <FileText size={17} className="stroke-[2.2]" />
+            <span>Upload Document</span>
+          </button>
+
+          {/* Builder Upload Images Action */}
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#7428E8] to-[#9B5CFF] hover:from-[#6415C5] hover:to-[#8B5CF6] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs hover:shadow-md transition cursor-pointer self-start sm:self-auto"
+          >
+            <UploadCloud size={17} className="stroke-[2.2]" />
+            <span>Upload Construction Images</span>
+          </button>
+        </div>
       </div>
 
       {/* Projects Progress Cards */}
@@ -371,6 +384,12 @@ export default function ProjectProgressView() {
           </div>
         </div>
       )}
+
+      {/* Builder Document Upload Modal */}
+      <BuilderDocumentUploadModal
+        isOpen={isDocUploadOpen}
+        onClose={() => setIsDocUploadOpen(false)}
+      />
     </div>
   );
 }

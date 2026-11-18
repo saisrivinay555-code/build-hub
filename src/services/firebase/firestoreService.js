@@ -341,3 +341,67 @@ export function subscribeToProgressUpdates(projectId, callback) {
     return () => {};
   }
 }
+
+/**
+ * Saves a project document (House plan, receipt, bill, approval) to Firestore
+ */
+export async function saveProjectDocumentToFirestore(docData) {
+  if (!isFirebaseConfigured || !db) {
+    return { id: 'pdoc_' + Date.now(), ...docData };
+  }
+
+  try {
+    const docsRef = collection(db, 'project_documents');
+    const docRef = await addDoc(docsRef, {
+      ...docData,
+      createdAt: serverTimestamp()
+    });
+    return { id: docRef.id, ...docData };
+  } catch (error) {
+    console.error('Error saving project document to Firestore:', error);
+    return { id: 'pdoc_' + Date.now(), ...docData };
+  }
+}
+
+/**
+ * Deletes a project document from Firestore
+ */
+export async function deleteProjectDocumentFromFirestore(documentId) {
+  if (!isFirebaseConfigured || !db) return true;
+
+  try {
+    const docRef = doc(db, 'project_documents', documentId);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error) {
+    console.error('Error deleting project document from Firestore:', error);
+    return false;
+  }
+}
+
+/**
+ * Subscribes to realtime project documents for a project
+ */
+export function subscribeToProjectDocuments(projectId, callback) {
+  if (!isFirebaseConfigured || !db) return () => {};
+
+  try {
+    const docsRef = collection(db, 'project_documents');
+    const q = projectId
+      ? query(docsRef, where('projectId', '==', projectId), orderBy('createdAt', 'desc'))
+      : query(docsRef, orderBy('createdAt', 'desc'));
+
+    return onSnapshot(q, (snapshot) => {
+      const items = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      }));
+      callback(items);
+    }, (err) => {
+      console.warn('Firestore project documents subscription notice:', err);
+    });
+  } catch (error) {
+    console.warn('Error setting up project documents subscription:', error);
+    return () => {};
+  }
+}
