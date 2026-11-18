@@ -405,12 +405,12 @@ export function AppProvider({ children }) {
   };
 
   // --- SOCIAL / OAUTH LOGIN HANDLERS ---
-  const loginWithGoogle = async () => {
-    const { user, profile } = await signInWithGoogle();
-    const rawRole = (profile.role || '').toLowerCase();
+  const loginWithGoogle = async (targetRole = 'customer') => {
+    const { user, profile } = await signInWithGoogle(targetRole);
+    const rawRole = (profile.role || targetRole || '').toLowerCase();
     const canonicalRole = rawRole === 'builder' ? 'Builder' : (rawRole === 'admin' || rawRole === 'administrator' ? 'Administrator' : 'Customer');
     const userData = {
-      name: profile.name || profile.fullName || user.displayName || '',
+      name: profile.name || profile.fullName || user.displayName || (canonicalRole === 'Builder' ? 'Builder Partner' : 'Customer'),
       role: canonicalRole,
       email: user.email || profile.email || '',
       avatar: user.photoURL || profile.avatar || '',
@@ -428,12 +428,12 @@ export function AppProvider({ children }) {
     return { user, profile };
   };
 
-  const loginWithMicrosoft = async () => {
-    const { user, profile } = await signInWithMicrosoft();
-    const rawRole = (profile.role || '').toLowerCase();
+  const loginWithMicrosoft = async (targetRole = 'customer') => {
+    const { user, profile } = await signInWithMicrosoft(targetRole);
+    const rawRole = (profile.role || targetRole || '').toLowerCase();
     const canonicalRole = rawRole === 'builder' ? 'Builder' : (rawRole === 'admin' || rawRole === 'administrator' ? 'Administrator' : 'Customer');
     const userData = {
-      name: profile.name || profile.fullName || user.displayName || '',
+      name: profile.name || profile.fullName || user.displayName || (canonicalRole === 'Builder' ? 'Builder Partner' : 'Customer'),
       role: canonicalRole,
       email: user.email || profile.email || '',
       avatar: user.photoURL || profile.avatar || '',

@@ -899,6 +899,20 @@ export default function LoginPage() {
                 </p>
               </div>
 
+              {/* Error / Success Messages */}
+              {authError && (
+                <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+                  <X size={15} className="text-red-500 shrink-0" />
+                  <span>{authError}</span>
+                </div>
+              )}
+              {authSuccess && (
+                <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold flex items-center gap-2">
+                  <Check size={15} className="text-emerald-500 shrink-0" />
+                  <span>{authSuccess}</span>
+                </div>
+              )}
+
               <form onSubmit={(e) => { e.preventDefault(); handleLoginSubmit('Builder'); }} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1.5">
@@ -965,34 +979,129 @@ export default function LoginPage() {
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 px-4 bg-[#092257] hover:bg-[#07183d] text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 cursor-pointer mt-2"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 px-4 bg-[#092257] hover:bg-[#07183d] text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-50"
                 >
-                  <LogIn size={18} />
-                  <span>Login as Builder</span>
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Authenticating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <LogIn size={18} />
+                      <span>Login as Builder</span>
+                    </>
+                  )}
                 </button>
               </form>
 
+              {/* ── Or continue with ── */}
               <div className="relative flex items-center justify-center my-5">
-                <div className="w-full border-t border-gray-200" />
-                <span className="bg-white px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider shrink-0">
-                  New Builder?
+                <div className="w-full border-t border-gray-200/80" />
+                <span className="bg-white px-4 text-xs font-semibold text-gray-400 shrink-0 whitespace-nowrap">
+                  Or continue with
                 </span>
-                <div className="w-full border-t border-gray-200" />
+                <div className="w-full border-t border-gray-200/80" />
+              </div>
+
+              {/* Social Login Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Google Login */}
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setAuthError('');
+                    setIsSubmitting(true);
+                    try {
+                      await loginWithGoogle('builder');
+                      confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+                    } catch (err) {
+                      console.error('Google login error:', err);
+                      if (err.code === 'auth/popup-closed-by-user') {
+                        // User closed popup, no error needed
+                      } else if (err.code === 'auth/unauthorized-domain') {
+                        setAuthError('Google Sign-In is not enabled for this domain. Please contact the administrator.');
+                      } else {
+                        setAuthError(err.message || 'Google Sign-In failed. Please try again.');
+                      }
+                    } finally {
+                      setIsSubmitting(false);
+                    }
+                  }}
+                  disabled={isSubmitting}
+                  className="flex items-center justify-center gap-2.5 py-3 px-3 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl text-sm font-semibold text-gray-700 transition-all duration-200 cursor-pointer disabled:opacity-50 hover:shadow-sm"
+                >
+                  {/* Official Google G Icon */}
+                  <svg width="18" height="18" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                  </svg>
+                  <span className="hidden sm:inline">Continue with Google</span>
+                  <span className="sm:hidden">Google</span>
+                </button>
+
+                {/* Microsoft Login */}
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setAuthError('');
+                    setIsSubmitting(true);
+                    try {
+                      await loginWithMicrosoft('builder');
+                      confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+                    } catch (err) {
+                      console.error('Microsoft login error:', err);
+                      if (err.code === 'auth/popup-closed-by-user') {
+                        // User closed popup, no error needed
+                      } else if (err.code === 'auth/unauthorized-domain') {
+                        setAuthError('Microsoft Sign-In is not enabled for this domain. Please contact the administrator.');
+                      } else {
+                        setAuthError(err.message || 'Microsoft Sign-In failed. Please try again.');
+                      }
+                    } finally {
+                      setIsSubmitting(false);
+                    }
+                  }}
+                  disabled={isSubmitting}
+                  className="flex items-center justify-center gap-2.5 py-3 px-3 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 rounded-xl text-sm font-semibold text-gray-700 transition-all duration-200 cursor-pointer disabled:opacity-50 hover:shadow-sm"
+                >
+                  {/* Official Microsoft Logo */}
+                  <svg width="18" height="18" viewBox="0 0 21 21">
+                    <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+                    <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+                    <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+                    <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+                  </svg>
+                  <span className="hidden sm:inline">Continue with Microsoft</span>
+                  <span className="sm:hidden">Microsoft</span>
+                </button>
+              </div>
+
+              {/* ── Or Sign Up Using ── */}
+              <div className="relative flex items-center justify-center my-5">
+                <div className="w-full border-t border-gray-200/80" />
+                <span className="bg-white px-4 text-xs font-semibold text-gray-400 shrink-0 whitespace-nowrap">
+                  Or Sign Up Using
+                </span>
+                <div className="w-full border-t border-gray-200/80" />
               </div>
 
               <button
                 type="button"
                 onClick={() => setAuthStep('register-builder')}
-                className="w-full py-3 px-4 bg-[#EBF3FF] hover:bg-[#DDEBFF] text-[#1E40AF] font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2.5 cursor-pointer border border-[#D0E2FF]"
+                className="w-full py-3.5 px-4 bg-[#EBF3FF] hover:bg-[#DDEBFF] text-[#1E40AF] font-bold rounded-xl text-sm transition-all duration-200 flex items-center justify-center gap-2.5 cursor-pointer border border-[#D0E2FF] hover:border-[#B8D5FF] hover:shadow-sm transform hover:-translate-y-0.5 active:translate-y-0"
               >
-                <Building size={17} />
+                <Building size={18} className="stroke-[2.2]" />
                 <span>Register as Builder</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setAuthStep('role-selection')}
-                className="w-full mt-4 text-center text-xs font-bold text-gray-500 hover:text-gray-800 transition flex items-center justify-center gap-1 cursor-pointer"
+                className="w-full mt-4 text-center text-xs font-bold text-gray-400 hover:text-gray-700 transition flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft size={14} />
                 <span>Back to Role Selection</span>

@@ -232,9 +232,9 @@ export function onAuthChange(callback) {
 
 /**
  * Sign in with Google OAuth (popup)
- * Creates a customer profile if user is new
+ * Creates a customer or builder profile if user is new
  */
-export async function signInWithGoogle() {
+export async function signInWithGoogle(targetRole = 'customer') {
   if (!isFirebaseConfigured || !auth) {
     throw new Error('Firebase Auth is not configured. Please set up Firebase to use Google Sign-In.');
   }
@@ -244,22 +244,47 @@ export async function signInWithGoogle() {
 
   // Check if profile already exists
   let profile = await getUserProfile(user.uid);
+  const isBuilder = (targetRole || '').toLowerCase() === 'builder';
+
   if (!profile) {
-    // New user — create customer profile from Google account info
-    profile = {
-      uid: user.uid,
-      fullName: user.displayName || '',
-      name: user.displayName || '',
-      email: user.email || '',
-      phone: user.phoneNumber || '',
-      city: '',
-      address: '',
-      role: 'customer',
-      accountStatus: 'active',
-      authProvider: 'google',
-      avatar: user.photoURL || ''
-    };
-    await saveCustomerProfile(user.uid, profile);
+    if (isBuilder) {
+      profile = {
+        uid: user.uid,
+        fullName: user.displayName || 'Builder Partner',
+        name: user.displayName || 'Builder Partner',
+        email: user.email || '',
+        phone: user.phoneNumber || '',
+        companyName: user.displayName ? `${user.displayName} Constructions` : 'Vinay Builders & Infra',
+        company: user.displayName ? `${user.displayName} Constructions` : 'Vinay Builders & Infra',
+        experience: 5,
+        specialization: 'Residential & Commercial',
+        licenseNo: `BLD-${Math.floor(100000 + Math.random() * 900000)}`,
+        location: 'Hyderabad',
+        city: 'Hyderabad',
+        role: 'builder',
+        accountStatus: 'active',
+        verificationStatus: 'approved',
+        authProvider: 'google',
+        avatar: user.photoURL || ''
+      };
+      await saveBuilderProfile(user.uid, profile);
+    } else {
+      // New user — create customer profile from Google account info
+      profile = {
+        uid: user.uid,
+        fullName: user.displayName || 'Customer',
+        name: user.displayName || 'Customer',
+        email: user.email || '',
+        phone: user.phoneNumber || '',
+        city: '',
+        address: '',
+        role: 'customer',
+        accountStatus: 'active',
+        authProvider: 'google',
+        avatar: user.photoURL || ''
+      };
+      await saveCustomerProfile(user.uid, profile);
+    }
   }
 
   return { user, profile };
@@ -267,9 +292,9 @@ export async function signInWithGoogle() {
 
 /**
  * Sign in with Microsoft OAuth (popup)
- * Creates a customer profile if user is new
+ * Creates a customer or builder profile if user is new
  */
-export async function signInWithMicrosoft() {
+export async function signInWithMicrosoft(targetRole = 'customer') {
   if (!isFirebaseConfigured || !auth) {
     throw new Error('Firebase Auth is not configured. Please set up Firebase to use Microsoft Sign-In.');
   }
@@ -279,22 +304,47 @@ export async function signInWithMicrosoft() {
 
   // Check if profile already exists
   let profile = await getUserProfile(user.uid);
+  const isBuilder = (targetRole || '').toLowerCase() === 'builder';
+
   if (!profile) {
-    // New user — create customer profile from Microsoft account info
-    profile = {
-      uid: user.uid,
-      fullName: user.displayName || '',
-      name: user.displayName || '',
-      email: user.email || '',
-      phone: user.phoneNumber || '',
-      city: '',
-      address: '',
-      role: 'customer',
-      accountStatus: 'active',
-      authProvider: 'microsoft',
-      avatar: user.photoURL || ''
-    };
-    await saveCustomerProfile(user.uid, profile);
+    if (isBuilder) {
+      profile = {
+        uid: user.uid,
+        fullName: user.displayName || 'Builder Partner',
+        name: user.displayName || 'Builder Partner',
+        email: user.email || '',
+        phone: user.phoneNumber || '',
+        companyName: user.displayName ? `${user.displayName} Constructions` : 'Vinay Builders & Infra',
+        company: user.displayName ? `${user.displayName} Constructions` : 'Vinay Builders & Infra',
+        experience: 5,
+        specialization: 'Residential & Commercial',
+        licenseNo: `BLD-${Math.floor(100000 + Math.random() * 900000)}`,
+        location: 'Hyderabad',
+        city: 'Hyderabad',
+        role: 'builder',
+        accountStatus: 'active',
+        verificationStatus: 'approved',
+        authProvider: 'microsoft',
+        avatar: user.photoURL || ''
+      };
+      await saveBuilderProfile(user.uid, profile);
+    } else {
+      // New user — create customer profile from Microsoft account info
+      profile = {
+        uid: user.uid,
+        fullName: user.displayName || 'Customer',
+        name: user.displayName || 'Customer',
+        email: user.email || '',
+        phone: user.phoneNumber || '',
+        city: '',
+        address: '',
+        role: 'customer',
+        accountStatus: 'active',
+        authProvider: 'microsoft',
+        avatar: user.photoURL || ''
+      };
+      await saveCustomerProfile(user.uid, profile);
+    }
   }
 
   return { user, profile };
