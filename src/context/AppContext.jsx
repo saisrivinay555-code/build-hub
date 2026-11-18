@@ -311,15 +311,17 @@ export function AppProvider({ children }) {
         if (profile) {
           const rawRole = (profile.role || '').toLowerCase();
           const canonicalRole = rawRole === 'builder' ? 'Builder' : (rawRole === 'admin' || rawRole === 'administrator' ? 'Administrator' : 'Customer');
-          setCurrentUser((prev) => ({
-            ...prev,
-            ...profile,
-            role: canonicalRole,
-            uid: firebaseUser.uid,
-            firebaseUid: firebaseUser.uid,
-            email: firebaseUser.email
-          }));
-          setIsAuthenticated(true);
+          setCurrentUser((prev) => {
+            const preservedRole = prev?.role || canonicalRole;
+            return {
+              ...prev,
+              ...profile,
+              role: preservedRole,
+              uid: firebaseUser.uid,
+              firebaseUid: firebaseUser.uid,
+              email: firebaseUser.email
+            };
+          });
         }
       }
     });
@@ -376,14 +378,15 @@ export function AppProvider({ children }) {
       name: resolvedName,
       role: canonicalRole,
       email: enteredEmail,
-      avatar: customData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      avatar: customData.avatar || (canonicalRole === 'Builder' ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'),
       phone: customData.phone || '',
       city: customData.city || '',
       address: customData.address || '',
-      company: customData.company || '',
-      licenseNo: customData.licenseNo || '',
+      company: customData.company || (canonicalRole === 'Builder' ? 'Vinay Builders & Infra' : ''),
+      licenseNo: customData.licenseNo || (canonicalRole === 'Builder' ? 'BLD-2021-8849' : ''),
       unreadNotifications: 0,
-      ...customData
+      ...customData,
+      role: canonicalRole // strictly enforce canonical role
     };
 
     setCurrentUser(userData);
@@ -393,34 +396,52 @@ export function AppProvider({ children }) {
     // Authenticate with Firebase Auth and sync user profile
     signInAsDemoRole(roleName, userData).then(({ profile }) => {
       if (profile && profile.uid) {
-        setCurrentUser((prev) => ({ ...prev, firebaseUid: profile.uid, uid: profile.uid }));
+        setCurrentUser((prev) => ({ 
+          ...prev, 
+          firebaseUid: profile.uid, 
+          uid: profile.uid,
+          role: canonicalRole // preserve role strictly
+        }));
       }
     }).catch(() => {});
   };
 
-  const logout = () => {
-    signOutUser().catch(() => {});
+  const logout = async () => {
+    try {
+      await signOutUser();
+    } catch (e) {
+      console.warn('Sign out error:', e);
+    }
+    localStorage.removeItem('buildhub_auth_v5');
+    localStorage.removeItem('buildhub_user_v5');
     setIsAuthenticated(false);
+    setCurrentUser(null);
     setAuthStep('role-selection');
   };
 
   // --- SOCIAL / OAUTH LOGIN HANDLERS ---
   const loginWithGoogle = async (targetRole = 'customer') => {
     const { user, profile } = await signInWithGoogle(targetRole);
-    const rawRole = (profile.role || targetRole || '').toLowerCase();
-    const canonicalRole = rawRole === 'builder' ? 'Builder' : (rawRole === 'admin' || rawRole === 'administrator' ? 'Administrator' : 'Customer');
+    const isTargetBuilder = (targetRole || '').toLowerCase() === 'builder';
+    const canonicalRole = isTargetBuilder 
+      ? 'Builder' 
+      : ((profile?.role || '').toLowerCase() === 'admin' ? 'Administrator' : 'Customer');
+
     const userData = {
-      name: profile.name || profile.fullName || user.displayName || (canonicalRole === 'Builder' ? 'Builder Partner' : 'Customer'),
+      name: profile?.name || profile?.fullName || user.displayName || (canonicalRole === 'Builder' ? 'Builder Partner' : 'Customer'),
       role: canonicalRole,
-      email: user.email || profile.email || '',
-      avatar: user.photoURL || profile.avatar || '',
-      phone: profile.phone || '',
-      city: profile.city || '',
-      address: profile.address || '',
+      email: user.email || profile?.email || '',
+      avatar: user.photoURL || profile?.avatar || '',
+      phone: profile?.phone || '',
+      city: profile?.city || '',
+      address: profile?.address || '',
+      company: profile?.companyName || profile?.company || (canonicalRole === 'Builder' ? 'Vinay Builders & Infra' : ''),
+      licenseNo: profile?.licenseNo || (canonicalRole === 'Builder' ? 'BLD-2021-8849' : ''),
       uid: user.uid,
       firebaseUid: user.uid,
       unreadNotifications: 0,
-      ...profile
+      ...profile,
+      role: canonicalRole // strictly enforce role
     };
     setCurrentUser(userData);
     setIsAuthenticated(true);
@@ -430,20 +451,26 @@ export function AppProvider({ children }) {
 
   const loginWithMicrosoft = async (targetRole = 'customer') => {
     const { user, profile } = await signInWithMicrosoft(targetRole);
-    const rawRole = (profile.role || targetRole || '').toLowerCase();
-    const canonicalRole = rawRole === 'builder' ? 'Builder' : (rawRole === 'admin' || rawRole === 'administrator' ? 'Administrator' : 'Customer');
+    const isTargetBuilder = (targetRole || '').toLowerCase() === 'builder';
+    const canonicalRole = isTargetBuilder 
+      ? 'Builder' 
+      : ((profile?.role || '').toLowerCase() === 'admin' ? 'Administrator' : 'Customer');
+
     const userData = {
-      name: profile.name || profile.fullName || user.displayName || (canonicalRole === 'Builder' ? 'Builder Partner' : 'Customer'),
+      name: profile?.name || profile?.fullName || user.displayName || (canonicalRole === 'Builder' ? 'Builder Partner' : 'Customer'),
       role: canonicalRole,
-      email: user.email || profile.email || '',
-      avatar: user.photoURL || profile.avatar || '',
-      phone: profile.phone || '',
-      city: profile.city || '',
-      address: profile.address || '',
+      email: user.email || profile?.email || '',
+      avatar: user.photoURL || profile?.avatar || '',
+      phone: profile?.phone || '',
+      city: profile?.city || '',
+      address: profile?.address || '',
+      company: profile?.companyName || profile?.company || (canonicalRole === 'Builder' ? 'Vinay Builders & Infra' : ''),
+      licenseNo: profile?.licenseNo || (canonicalRole === 'Builder' ? 'BLD-2021-8849' : ''),
       uid: user.uid,
       firebaseUid: user.uid,
       unreadNotifications: 0,
-      ...profile
+      ...profile,
+      role: canonicalRole // strictly enforce role
     };
     setCurrentUser(userData);
     setIsAuthenticated(true);
@@ -805,5 +832,9 @@ export function AppProvider({ children }) {
 }
 
 export function useApp() {
-  return useContext(AppContext);
+  const context = useContext(AppContext);
+  if (!context) {
+    return {};
+  }
+  return context;
 }

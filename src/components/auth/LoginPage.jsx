@@ -285,7 +285,10 @@ export default function LoginPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
             
             {/* Card 1: ADMINISTRATOR */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
+            <div 
+              onClick={() => handleSelectRole('admin')}
+              className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group cursor-pointer"
+            >
               <div>
                 <div className="w-16 h-16 rounded-2xl bg-[#EBF3FF] text-[#1E60FF] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-xs">
                   <Shield size={32} className="stroke-[2.2]" />
@@ -297,7 +300,7 @@ export default function LoginPage() {
               </div>
 
               <button
-                onClick={() => handleSelectRole('admin')}
+                onClick={(e) => { e.stopPropagation(); handleSelectRole('admin'); }}
                 className="mt-6 w-full py-3 px-4 bg-[#092257] hover:bg-[#07183d] text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 cursor-pointer group-hover:bg-[#1E60FF]"
               >
                 <span>Continue as Administrator</span>
@@ -306,7 +309,10 @@ export default function LoginPage() {
             </div>
 
             {/* Card 2: BUILDER */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
+            <div 
+              onClick={() => handleSelectRole('builder')}
+              className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group cursor-pointer"
+            >
               <div>
                 <div className="w-16 h-16 rounded-2xl bg-[#E8F8F0] text-[#10B981] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-xs">
                   <HardHat size={32} className="stroke-[2.2]" />
@@ -318,7 +324,7 @@ export default function LoginPage() {
               </div>
 
               <button
-                onClick={() => handleSelectRole('builder')}
+                onClick={(e) => { e.stopPropagation(); handleSelectRole('builder'); }}
                 className="mt-6 w-full py-3 px-4 bg-[#092257] hover:bg-[#07183d] text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 cursor-pointer group-hover:bg-[#10B981]"
               >
                 <span>Continue as Builder</span>
@@ -327,7 +333,10 @@ export default function LoginPage() {
             </div>
 
             {/* Card 3: CUSTOMER */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
+            <div 
+              onClick={() => handleSelectRole('customer')}
+              className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/90 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group cursor-pointer"
+            >
               <div>
                 <div className="w-16 h-16 rounded-2xl bg-[#F3E8FF] text-[#8B5CF6] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-xs">
                   <Home size={32} className="stroke-[2.2]" />
@@ -339,7 +348,7 @@ export default function LoginPage() {
               </div>
 
               <button
-                onClick={() => handleSelectRole('customer')}
+                onClick={(e) => { e.stopPropagation(); handleSelectRole('customer'); }}
                 className="mt-6 w-full py-3 px-4 bg-[#092257] hover:bg-[#07183d] text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 cursor-pointer group-hover:bg-[#8B5CF6]"
               >
                 <span>Continue as Customer</span>
@@ -641,11 +650,23 @@ export default function LoginPage() {
                 <span>Register as Customer</span>
               </button>
 
+              {/* Direct Switch to Builder Login */}
+              <div className="mt-4 pt-3 border-t border-gray-100 text-center text-xs text-gray-500 flex items-center justify-center gap-1.5">
+                <span>Are you a Builder / Contractor?</span>
+                <button
+                  type="button"
+                  onClick={() => handleSelectRole('builder')}
+                  className="font-bold text-[#6415C5] hover:underline cursor-pointer"
+                >
+                  Login as Builder →
+                </button>
+              </div>
+
               {/* Back to Home */}
               <button
                 type="button"
                 onClick={() => setAuthStep('role-selection')}
-                className="w-full mt-5 text-center text-sm font-bold text-gray-500 hover:text-[#6415C5] transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full mt-3 text-center text-sm font-bold text-gray-500 hover:text-[#6415C5] transition-colors duration-200 flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft size={15} />
                 <span>Back to Home</span>
@@ -1098,10 +1119,22 @@ export default function LoginPage() {
                 <span>Register as Builder</span>
               </button>
 
+              {/* Direct Switch to Customer Login */}
+              <div className="mt-4 pt-3 border-t border-gray-100 text-center text-xs text-gray-500 flex items-center justify-center gap-1.5">
+                <span>Are you a Customer?</span>
+                <button
+                  type="button"
+                  onClick={() => handleSelectRole('customer')}
+                  className="font-bold text-[#1E40AF] hover:underline cursor-pointer"
+                >
+                  Login as Customer →
+                </button>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setAuthStep('role-selection')}
-                className="w-full mt-4 text-center text-xs font-bold text-gray-400 hover:text-gray-700 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full mt-3 text-center text-xs font-bold text-gray-400 hover:text-gray-700 transition flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft size={14} />
                 <span>Back to Role Selection</span>

@@ -185,7 +185,7 @@ export async function signOutUser() {
 }
 
 /**
- * Fetch profile doc from Firestore `users/{uid}`
+ * Fetch profile doc from Firestore `users/{uid}` or `builders/{uid}`
  */
 export async function getUserProfile(uid) {
   if (!isFirebaseConfigured || !db) return null;
@@ -194,6 +194,12 @@ export async function getUserProfile(uid) {
     const snap = await getDoc(userDocRef);
     if (snap.exists()) {
       return snap.data();
+    }
+    // Also check 'builders' collection if not in 'users'
+    const builderDocRef = doc(db, 'builders', uid);
+    const bSnap = await getDoc(builderDocRef);
+    if (bSnap.exists()) {
+      return { ...bSnap.data(), role: 'builder' };
     }
     return null;
   } catch (err) {
@@ -232,7 +238,7 @@ export function onAuthChange(callback) {
 
 /**
  * Sign in with Google OAuth (popup)
- * Creates a customer or builder profile if user is new
+ * Creates a customer or builder profile if user is new, or provisions requested role
  */
 export async function signInWithGoogle(targetRole = 'customer') {
   if (!isFirebaseConfigured || !auth) {
@@ -246,7 +252,8 @@ export async function signInWithGoogle(targetRole = 'customer') {
   let profile = await getUserProfile(user.uid);
   const isBuilder = (targetRole || '').toLowerCase() === 'builder';
 
-  if (!profile) {
+  // If user has no profile OR user is logging in from Builder portal but doesn't have builder role yet
+  if (!profile || (isBuilder && (profile.role || '').toLowerCase() !== 'builder')) {
     if (isBuilder) {
       profile = {
         uid: user.uid,
@@ -292,7 +299,7 @@ export async function signInWithGoogle(targetRole = 'customer') {
 
 /**
  * Sign in with Microsoft OAuth (popup)
- * Creates a customer or builder profile if user is new
+ * Creates a customer or builder profile if user is new, or provisions requested role
  */
 export async function signInWithMicrosoft(targetRole = 'customer') {
   if (!isFirebaseConfigured || !auth) {
@@ -306,7 +313,8 @@ export async function signInWithMicrosoft(targetRole = 'customer') {
   let profile = await getUserProfile(user.uid);
   const isBuilder = (targetRole || '').toLowerCase() === 'builder';
 
-  if (!profile) {
+  // If user has no profile OR user is logging in from Builder portal but doesn't have builder role yet
+  if (!profile || (isBuilder && (profile.role || '').toLowerCase() !== 'builder')) {
     if (isBuilder) {
       profile = {
         uid: user.uid,
