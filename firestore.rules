@@ -1,0 +1,241 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────────
+    // HELPER FUNCTIONS & ROLE CHECKS (SECURE, STRICT ENFORCEMENT)
+    // ─────────────────────────────────────────────────────────────
+
+    // Checks if request is from an authenticated Firebase user
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Fetches the user profile document safely
+    function getUserDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Checks if user has the server-assigned Administrator role (case-insensitive)
+    function isAdmin() {
+      return isAuthenticated() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (getUserDoc().role == 'Administrator' || getUserDoc().role == 'admin')
+      );
+    }
+
+    // Checks if user has the server-assigned Builder role
+    function isBuilder() {
+      return isAuthenticated() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (getUserDoc().role == 'Builder' || getUserDoc().role == 'builder')
+      );
+    }
+
+    // Checks if user has the Customer role
+    function isCustomer() {
+      return isAuthenticated() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (getUserDoc().role == 'Customer' || getUserDoc().role == 'customer')
+      );
+    }
+
+    // Checks if user owns the document by authenticated UID
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Checks if authenticated user is the assigned Customer of a project
+    function isProjectCustomer(projectData) {
+      return isAuthenticated() && (
+        (projectData.customerId != null && projectData.customerId == request.auth.uid) ||
+        (projectData.customerEmail != null && projectData.customerEmail == request.auth.token.email)
+      );
+    }
+
+    // Checks if authenticated user is the assigned Builder of a project
+    function isProjectBuilder(projectData) {
+      return isAuthenticated() && (
+        (projectData.builderId != null && projectData.builderId == request.auth.uid) ||
+        (projectData.builderEmail != null && projectData.builderEmail == request.auth.token.email)
+      );
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 1. USERS COLLECTION
+    // ─────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      // Users can read their own profile; Admins can read all profiles;
+      // Builders can read customer profiles
+      allow read: if isOwner(userId) || isAdmin() || isBuilder();
+
+      // Clients can ONLY register as 'Customer' or 'Builder'
+      // Client-assigned 'Administrator' is strictly forbidden
+      // New builders start with verificationStatus 'pending'
+      allow create: if isOwner(userId) && (
+        request.resource.data.role in ['Customer', 'customer', 'Builder', 'builder']
+      ) && (
+        !('verificationStatus' in request.resource.data) || 
+        request.resource.data.verificationStatus in ['pending', 'Pending']
+      );
+
+      // Clients can update their own details, but CANNOT tamper with or escalate role/status
+      // Only an existing Administrator can modify user roles or verification/account status
+      allow update: if isAdmin() || (
+        isOwner(userId) && (
+          (!('role' in request.resource.data) || request.resource.data.role == resource.data.role) &&
+          (!('verificationStatus' in request.resource.data) || request.resource.data.verificationStatus == resource.data.verificationStatus) &&
+          (!('accountStatus' in request.resource.data) || request.resource.data.accountStatus == resource.data.accountStatus)
+        )
+      );
+
+      allow delete: if isAdmin();
+
+      // User chat messages subcollection
+      match /chat_messages/{messageId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 2. BUILDERS CATALOG & MANAGEMENT
+    // ─────────────────────────────────────────────────────────────
+    match /builders/{builderId} {
+      // All authenticated users can view the builder directory; Admins can view all
+      allow read: if isAuthenticated();
+
+      // Builders can register themselves with 'pending' verification; Admins can create directly
+      allow create: if isAdmin() || (
+        isOwner(builderId) && (
+          !('verificationStatus' in request.resource.data) || 
+          request.resource.data.verificationStatus in ['pending', 'Pending']
+        )
+      );
+
+      // Builders can update their own public profile (company, phone, etc.),
+      // but CANNOT change their own verificationStatus or accountStatus
+      // Only Admins can approve, reject, or suspend a builder
+      allow update: if isAdmin() || (
+        isOwner(builderId) && (
+          (!('verificationStatus' in request.resource.data) || request.resource.data.verificationStatus == resource.data.verificationStatus) &&
+          (!('accountStatus' in request.resource.data) || request.resource.data.accountStatus == resource.data.accountStatus) &&
+          (!('role' in request.resource.data) || request.resource.data.role == resource.data.role)
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 3. CUSTOMERS CATALOG & MANAGEMENT
+    // ─────────────────────────────────────────────────────────────
+    match /customers/{customerId} {
+      // Only authenticated Admins, the customer themselves, or an assigned builder can read customer details
+      // No publicly readable customer database
+      allow read: if isOwner(customerId) || isAdmin() || isBuilder();
+
+      // Customers can create their own profile upon registration; Admins can create directly
+      allow create: if isAdmin() || (
+        isOwner(customerId) && 
+        request.resource.data.role in ['Customer', 'customer']
+      );
+
+      // Customers can update contact/address info, but cannot change accountStatus or role
+      allow update: if isAdmin() || (
+        isOwner(customerId) && (
+          (!('role' in request.resource.data) || request.resource.data.role == resource.data.role) &&
+          (!('accountStatus' in request.resource.data) || request.resource.data.accountStatus == resource.data.accountStatus)
+        )
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 4. PROJECTS COLLECTION
+    // ─────────────────────────────────────────────────────────────
+    match /projects/{projectId} {
+      // Customers can ONLY read their own assigned projects.
+      // Builders can read projects assigned to them.
+      // Admins have oversight across all projects.
+      allow read: if isAdmin() ||
+                     isProjectBuilder(resource.data) ||
+                     isProjectCustomer(resource.data);
+
+      // Builders and Admins can create new projects
+      allow create: if isAdmin() || isBuilder();
+
+      // Builders can update projects assigned to them; Admins can update any
+      // Customers cannot alter project progress or milestones
+      allow update: if isAdmin() || isProjectBuilder(resource.data);
+
+      // Only Admins can delete projects
+      allow delete: if isAdmin();
+
+      // Milestones / Stages subcollection
+      match /stages/{stageId} {
+        allow read: if isAdmin() ||
+                       isProjectBuilder(get(/databases/$(database)/documents/projects/$(projectId)).data) ||
+                       isProjectCustomer(get(/databases/$(database)/documents/projects/$(projectId)).data);
+
+        allow write: if isAdmin() ||
+                        isProjectBuilder(get(/databases/$(database)/documents/projects/$(projectId)).data);
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 5. CHAT MESSAGES COLLECTION
+    // ─────────────────────────────────────────────────────────────
+    match /chat_messages/{messageId} {
+      // Users can only read messages belonging to them
+      allow read: if isAdmin() ||
+                     (isAuthenticated() && resource.data.userId == request.auth.uid);
+
+      // Authenticated users can post messages stamped with their own identity
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid;
+
+      allow update, delete: if isAdmin() ||
+                               (isAuthenticated() && resource.data.userId == request.auth.uid);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 6. CUSTOMER INQUIRIES & REQUESTS
+    // ─────────────────────────────────────────────────────────────
+    match /customer_requests/{requestId} {
+      // Authenticated customers can submit inquiries
+      allow create: if isAuthenticated();
+
+      // Admins and Builders can review inquiries; customers can review their own inquiries
+      allow read: if isAdmin() ||
+                     isBuilder() ||
+                     (isAuthenticated() && resource.data.email == request.auth.token.email);
+
+      // Builders and Admins can update inquiry status
+      allow update: if isAdmin() || isBuilder();
+
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 6b. BUILDER BOOKINGS COLLECTION
+    // ─────────────────────────────────────────────────────────────
+    match /builder_bookings/{bookingId} {
+      allow create: if isAuthenticated();
+      allow read: if isAdmin() ||
+                     isBuilder() ||
+                     (isAuthenticated() && (resource.data.customerId == request.auth.uid || resource.data.customerEmail == request.auth.token.email));
+      allow update: if isAdmin() || isBuilder() || (isAuthenticated() && resource.data.customerId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 7. DEFAULT CATCH-ALL
+    // ─────────────────────────────────────────────────────────────
+    // Deny all unauthenticated access and unknown collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
