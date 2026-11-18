@@ -75,11 +75,22 @@ export function AppProvider({ children }) {
   // Current Logged-in User (Clean state, no fake demo profile)
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('buildhub_user_v5');
-    return saved ? JSON.parse(saved) : {
-      name: '',
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (!parsed.name || parsed.name.toLowerCase() === 'conductor') {
+          parsed.name = parsed.role === 'Customer' ? 'Customer' : (parsed.role || 'Customer');
+        }
+        return parsed;
+      } catch (e) {
+        console.warn('Error reading saved user:', e);
+      }
+    }
+    return {
+      name: 'Customer',
       role: 'Customer',
       email: '',
-      avatar: '',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
       phone: '',
       city: '',
       address: '',
@@ -204,7 +215,7 @@ export function AppProvider({ children }) {
   const [editingItem, setEditingItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Wipe old demo localStorage keys once on mount
+  // Wipe old demo localStorage keys once on mount and sanitize conductor name
   useEffect(() => {
     const oldDemoKeys = [
       'buildhub_auth_v4', 'buildhub_user_v4', 'buildhub_customer_project',
@@ -213,6 +224,17 @@ export function AppProvider({ children }) {
       'buildhub_my_projects', 'buildhub_my_projects_v4'
     ];
     oldDemoKeys.forEach(k => localStorage.removeItem(k));
+
+    // Clear any stale 'conductor' user name in localStorage
+    const savedUserStr = localStorage.getItem('buildhub_user_v5');
+    if (savedUserStr && savedUserStr.toLowerCase().includes('conductor')) {
+      try {
+        const parsed = JSON.parse(savedUserStr);
+        parsed.name = parsed.role === 'Customer' ? 'Customer' : (parsed.role || 'Customer');
+        localStorage.setItem('buildhub_user_v5', JSON.stringify(parsed));
+        setCurrentUser(parsed);
+      } catch (e) {}
+    }
   }, []);
 
   // Persist clean storage
@@ -342,9 +364,13 @@ export function AppProvider({ children }) {
   // Auth Helpers: Build userData from actual user input
   const loginAsRole = async (roleName, customData = {}) => {
     const enteredEmail = customData.email || '';
-    const fallbackName = customData.name || (enteredEmail ? enteredEmail.split('@')[0] : (roleName === 'Administrator' ? 'Administrator' : roleName));
     const rawRole = (roleName || customData.role || '').toLowerCase();
     const canonicalRole = rawRole === 'builder' ? 'Builder' : (rawRole === 'admin' || rawRole === 'administrator' ? 'Administrator' : 'Customer');
+
+    let fallbackName = customData.name || (enteredEmail ? enteredEmail.split('@')[0] : (roleName === 'Administrator' ? 'Administrator' : roleName));
+    if (!fallbackName || fallbackName.toLowerCase() === 'conductor') {
+      fallbackName = canonicalRole === 'Customer' ? 'Customer' : canonicalRole;
+    }
 
     const userData = {
       name: fallbackName,

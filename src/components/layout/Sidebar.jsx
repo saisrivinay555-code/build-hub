@@ -163,7 +163,7 @@ export default function Sidebar({ isMobileOpen, onCloseMobile }) {
               className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-400 hover:text-red-400 hover:bg-white/5 transition-colors cursor-pointer"
             >
               <LogOut size={15} />
-              <span>Sign Out ({currentUser.name?.split(' ')[0] || 'User'})</span>
+              <span>Sign Out ({(!currentUser?.name || currentUser.name.toLowerCase() === 'conductor') ? (isCustomer ? 'Customer' : (currentUser?.role || 'User')) : currentUser.name.split(' ')[0]})</span>
             </button>
           </div>
 

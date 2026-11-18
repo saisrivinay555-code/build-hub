@@ -47,11 +47,13 @@ export default function CustomerProfileView() {
           <div className="flex items-center gap-4">
             <img
               src={currentUser.avatar}
-              alt={currentUser.name}
+              alt={currentUser.name || 'Customer'}
               className="w-16 h-16 rounded-full object-cover ring-4 ring-purple-100"
             />
             <div>
-              <h3 className="font-bold text-lg text-gray-900">{currentUser.name}</h3>
+              <h3 className="font-bold text-lg text-gray-900">
+                {(!currentUser.name || currentUser.name.toLowerCase() === 'conductor') ? 'Customer' : currentUser.name}
+              </h3>
               <div className="flex items-center gap-2 mt-1">
                 <span className="px-2.5 py-0.5 text-xs font-bold bg-purple-100 text-purple-800 rounded-full">
                   🏡 Property Owner

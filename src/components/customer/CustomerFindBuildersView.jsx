@@ -211,11 +211,13 @@ export default function CustomerFindBuildersView() {
           {/* Customer Avatar & Name */}
           <div className="flex items-center gap-2.5 pl-2 border-l border-gray-200">
             <div className="w-9 h-9 rounded-full bg-[#7428E8] text-white font-bold flex items-center justify-center text-xs shadow-xs">
-              SA
+              {(!currentUser?.name || currentUser.name.toLowerCase() === 'conductor' || currentUser.name.toLowerCase() === 'customer')
+                ? 'CU'
+                : (currentUser.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'CU')}
             </div>
             <div className="hidden sm:block text-left">
               <p className="text-sm font-bold text-[#101D3A] leading-tight">
-                {currentUser?.name || 'Sai Attada'}
+                {(!currentUser?.name || currentUser.name.toLowerCase() === 'conductor') ? 'Customer' : currentUser.name}
               </p>
             </div>
             <ChevronDown size={15} className="text-gray-400" />
