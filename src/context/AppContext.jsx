@@ -15,7 +15,9 @@ import {
   INITIAL_WORKERS,
   INITIAL_ADMIN_PROJECTS,
   CHART_MONTHLY_OVERVIEW,
-  FIND_BUILDERS_DATA
+  FIND_BUILDERS_DATA,
+  INITIAL_CONSTRUCTION_IMAGES,
+  INITIAL_PROGRESS_UPDATES
 } from '../data/initialData';
 import { 
   signInAsDemoRole, 
@@ -29,7 +31,12 @@ import {
 } from '../services/firebase/authService';
 import { 
   createBuilderBookingInFirestore,
-  updateBookingStatusInFirestore
+  updateBookingStatusInFirestore,
+  saveConstructionImageToFirestore,
+  deleteConstructionImageFromFirestore,
+  subscribeToConstructionImages,
+  saveProgressUpdateToFirestore,
+  subscribeToProgressUpdates
 } from '../services/firebase/firestoreService';
 import { 
   seedInitialDataIfEmpty, 
@@ -167,6 +174,17 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // --- CONSTRUCTION IMAGES GALLERY & PROGRESS UPDATES ---
+  const [constructionImages, setConstructionImages] = useState(() => {
+    const saved = localStorage.getItem('buildhub_construction_images_v5');
+    return saved ? JSON.parse(saved) : INITIAL_CONSTRUCTION_IMAGES;
+  });
+
+  const [progressUpdates, setProgressUpdates] = useState(() => {
+    const saved = localStorage.getItem('buildhub_progress_updates_v5');
+    return saved ? JSON.parse(saved) : INITIAL_PROGRESS_UPDATES;
+  });
+
   // Modals & Popups
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -205,6 +223,14 @@ export function AppProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('buildhub_bookings_v5', JSON.stringify(bookings));
   }, [bookings]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_construction_images_v5', JSON.stringify(constructionImages));
+  }, [constructionImages]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_progress_updates_v5', JSON.stringify(progressUpdates));
+  }, [progressUpdates]);
 
   // ─── FIREBASE REALTIME SYNC ───
   useEffect(() => {
@@ -262,12 +288,28 @@ export function AppProvider({ children }) {
       }
     });
 
+    // 6. Realtime listener for Construction Images
+    const unsubscribeImgs = subscribeToConstructionImages(null, (remoteImgs) => {
+      if (remoteImgs && remoteImgs.length > 0) {
+        setConstructionImages(remoteImgs);
+      }
+    });
+
+    // 7. Realtime listener for Progress Updates
+    const unsubscribeUpdates = subscribeToProgressUpdates(null, (remoteUpdates) => {
+      if (remoteUpdates && remoteUpdates.length > 0) {
+        setProgressUpdates(remoteUpdates);
+      }
+    });
+
     return () => {
       unsubscribeProjects();
       unsubscribeBuilders();
       unsubscribeCustomers();
       unsubscribeCustomer();
       unsubscribeAuth();
+      unsubscribeImgs();
+      unsubscribeUpdates();
     };
   }, [customerProject?.id]);
 
@@ -492,6 +534,76 @@ export function AppProvider({ children }) {
     return newBooking;
   };
 
+  // --- CONSTRUCTION IMAGES GALLERY ACTIONS ---
+  const uploadConstructionImages = async ({
+    projectId = customerProject?.id || 'cp_ramesh_1',
+    stage = 'Interior & Finishing',
+    description = '',
+    uploadDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+    images = [] // Array of base64 data URLs or image URLs
+  }) => {
+    const builderName = currentUser?.role?.toLowerCase() === 'builder' 
+      ? (currentUser?.name || currentUser?.company || 'Ravi Constructions') 
+      : (customerProject?.builderName || 'Ravi Constructions');
+    const builderId = currentUser?.role?.toLowerCase() === 'builder' 
+      ? (currentUser?.uid || 'b-ravi') 
+      : (customerProject?.builderId || 'b-ravi');
+
+    const createdImages = [];
+
+    for (let i = 0; i < images.length; i++) {
+      const imgData = {
+        id: 'cimg_' + Date.now() + '_' + i,
+        projectId,
+        builderId,
+        builderName,
+        imageUrl: images[i],
+        stage,
+        description: description || `Construction progress verification for ${stage}.`,
+        uploadDate,
+        createdAt: new Date().toISOString()
+      };
+
+      // Save to Firestore
+      saveConstructionImageToFirestore(imgData).catch(err => {
+        console.warn('Firestore image save notice:', err);
+      });
+      createdImages.push(imgData);
+    }
+
+    setConstructionImages(prev => [...createdImages, ...prev]);
+
+    // Create a corresponding Progress Update timeline record
+    const newProgressUpdate = {
+      id: 'pup_' + Date.now(),
+      projectId,
+      builderId,
+      builderName,
+      builderAvatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=150&auto=format&fit=crop&q=80',
+      stage,
+      title: `${stage} Stage Progress Verification`,
+      description: description || `Uploaded ${images.length} construction verification photograph(s) for ${stage} stage inspection.`,
+      progressPercentage: customerProject?.progress || 25,
+      date: uploadDate,
+      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      images: images
+    };
+
+    saveProgressUpdateToFirestore(newProgressUpdate).catch(err => {
+      console.warn('Firestore progress update save notice:', err);
+    });
+    setProgressUpdates(prev => [newProgressUpdate, ...prev]);
+
+    return createdImages;
+  };
+
+  const deleteConstructionImage = async (imageId) => {
+    setConstructionImages(prev => prev.filter(img => img.id !== imageId));
+    deleteConstructionImageFromFirestore(imageId).catch(err => {
+      console.warn('Firestore image delete notice:', err);
+    });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -576,7 +688,14 @@ export function AppProvider({ children }) {
         bookings,
         placeBooking,
         updateBookingStatus: updateCustomerRequestStatus,
-        findBuildersList: FIND_BUILDERS_DATA
+        findBuildersList: FIND_BUILDERS_DATA,
+        // Construction Images Gallery & Progress Updates
+        constructionImages,
+        setConstructionImages,
+        progressUpdates,
+        setProgressUpdates,
+        uploadConstructionImages,
+        deleteConstructionImage
       }}
     >
       {children}

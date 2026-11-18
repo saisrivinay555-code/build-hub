@@ -3,6 +3,10 @@
 // =========================================================================
 import builderAvatarImg from '../assets/builder-avatar.png';
 import builderVillaBannerImg from '../assets/builder-villa-banner.png';
+import galleryImg1 from '../assets/construction-gallery-1.png';
+import galleryImg2 from '../assets/construction-gallery-2.png';
+import galleryImg3 from '../assets/construction-gallery-3.png';
+import galleryImg4 from '../assets/construction-gallery-4.png';
 
 // --- 1. CUSTOMER SPECIFIC DATA (RAMESH KUMAR) ---
 export const CUSTOMER_PROJECT_DATA = {
@@ -971,5 +975,101 @@ export const FIND_BUILDERS_DATA = [
     projects: [],
     reviews: [],
     portfolio: []
+  }
+];
+
+// =========================================================================
+// CONSTRUCTION IMAGES GALLERY & PROGRESS UPDATES (MATCHING REFERENCE UI)
+// =========================================================================
+
+export const INITIAL_CONSTRUCTION_IMAGES = [
+  {
+    id: 'cimg_1',
+    projectId: 'cp_ramesh_1',
+    builderId: 'b-ravi',
+    builderName: 'Ravi Constructions',
+    imageUrl: galleryImg1,
+    stage: 'Structure',
+    description: 'RCC column framing & roof slab casting under clear weather verification.',
+    uploadDate: 'Aug 15, 2026',
+    createdAt: '2026-08-15T10:30:00Z'
+  },
+  {
+    id: 'cimg_2',
+    projectId: 'cp_ramesh_1',
+    builderId: 'b-ravi',
+    builderName: 'Ravi Constructions',
+    imageUrl: galleryImg2,
+    stage: 'Interior & Finishing',
+    description: 'Interior room rough plastering, ceiling conduit routing, and window frame alignment.',
+    uploadDate: 'Aug 10, 2026',
+    createdAt: '2026-08-10T14:15:00Z'
+  },
+  {
+    id: 'cimg_3',
+    projectId: 'cp_ramesh_1',
+    builderId: 'b-ravi',
+    builderName: 'Ravi Constructions',
+    imageUrl: galleryImg3,
+    stage: 'Brickwork',
+    description: 'Red brick masonry walls erected with exterior bamboo scaffolding setup.',
+    uploadDate: 'Aug 05, 2026',
+    createdAt: '2026-08-05T09:45:00Z'
+  },
+  {
+    id: 'cimg_4',
+    projectId: 'cp_ramesh_1',
+    builderId: 'b-ravi',
+    builderName: 'Ravi Constructions',
+    imageUrl: galleryImg4,
+    stage: 'Foundation',
+    description: 'Completed external facade structural review with glass balconies and driveway.',
+    uploadDate: 'Jul 28, 2026',
+    createdAt: '2026-07-28T16:20:00Z'
+  }
+];
+
+export const INITIAL_PROGRESS_UPDATES = [
+  {
+    id: 'pup_1',
+    projectId: 'cp_ramesh_1',
+    builderId: 'b-ravi',
+    builderName: 'Ravi Constructions',
+    builderAvatar: builderAvatarImg,
+    stage: 'Interior & Finishing',
+    title: 'Rough Plastering & Ceiling Framework Completed',
+    description: 'False ceiling framework and internal conduit wiring completed for first floor bedrooms. Wall putty application commenced.',
+    progressPercentage: 25,
+    date: 'Aug 15, 2026',
+    time: '11:30 AM',
+    images: [galleryImg1, galleryImg2]
+  },
+  {
+    id: 'pup_2',
+    projectId: 'cp_ramesh_1',
+    builderId: 'b-ravi',
+    builderName: 'Ravi Constructions',
+    builderAvatar: builderAvatarImg,
+    stage: 'Brickwork',
+    title: 'External Brick Masonry & Perimeter Walls',
+    description: 'Completed double-wall brick masonry with mortar curing testing. Plumbing ducts left clear as per architectural drawings.',
+    progressPercentage: 20,
+    date: 'Aug 05, 2026',
+    time: '04:15 PM',
+    images: [galleryImg3]
+  },
+  {
+    id: 'pup_3',
+    projectId: 'cp_ramesh_1',
+    builderId: 'b-ravi',
+    builderName: 'Ravi Constructions',
+    builderAvatar: builderAvatarImg,
+    stage: 'Foundation',
+    title: 'Earth Excavation & Anti-Termite RCC Raft',
+    description: 'Soil bearing test certified by structural engineer. Footing casting and sub-surface waterproofing successfully applied.',
+    progressPercentage: 10,
+    date: 'Jul 28, 2026',
+    time: '02:00 PM',
+    images: [galleryImg4]
   }
 ];

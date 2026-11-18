@@ -13,6 +13,7 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  deleteDoc,
   query,
   where,
   orderBy,
@@ -226,5 +227,117 @@ export async function updateBookingStatusInFirestore(bookingId, status) {
   } catch (error) {
     console.error('Error updating booking status in Firestore:', error);
     return false;
+  }
+}
+
+/**
+ * Saves a new construction photograph record in Firestore
+ */
+export async function saveConstructionImageToFirestore(imageData) {
+  if (!isFirebaseConfigured || !db) {
+    return { id: 'cimg_' + Date.now(), ...imageData };
+  }
+
+  try {
+    const imagesRef = collection(db, 'construction_images');
+    const docRef = await addDoc(imagesRef, {
+      ...imageData,
+      createdAt: serverTimestamp()
+    });
+    return { id: docRef.id, ...imageData };
+  } catch (error) {
+    console.error('Error saving construction image to Firestore:', error);
+    return { id: 'cimg_' + Date.now(), ...imageData };
+  }
+}
+
+/**
+ * Deletes a construction image record from Firestore
+ */
+export async function deleteConstructionImageFromFirestore(imageId) {
+  if (!isFirebaseConfigured || !db) return true;
+
+  try {
+    const imgRef = doc(db, 'construction_images', imageId);
+    await deleteDoc(imgRef);
+    return true;
+  } catch (error) {
+    console.error('Error deleting construction image from Firestore:', error);
+    return false;
+  }
+}
+
+/**
+ * Subscribes to realtime construction images for a project
+ */
+export function subscribeToConstructionImages(projectId, callback) {
+  if (!isFirebaseConfigured || !db) return () => {};
+
+  try {
+    const imagesRef = collection(db, 'construction_images');
+    const q = projectId 
+      ? query(imagesRef, where('projectId', '==', projectId), orderBy('createdAt', 'desc'))
+      : query(imagesRef, orderBy('createdAt', 'desc'));
+
+    return onSnapshot(q, (snapshot) => {
+      const items = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      }));
+      callback(items);
+    }, (err) => {
+      console.warn('Firestore construction images subscription notice:', err);
+    });
+  } catch (error) {
+    console.warn('Error setting up construction images subscription:', error);
+    return () => {};
+  }
+}
+
+/**
+ * Saves a progress update in Firestore
+ */
+export async function saveProgressUpdateToFirestore(updateData) {
+  if (!isFirebaseConfigured || !db) {
+    return { id: 'pup_' + Date.now(), ...updateData };
+  }
+
+  try {
+    const updatesRef = collection(db, 'progress_updates');
+    const docRef = await addDoc(updatesRef, {
+      ...updateData,
+      createdAt: serverTimestamp()
+    });
+    return { id: docRef.id, ...updateData };
+  } catch (error) {
+    console.error('Error saving progress update to Firestore:', error);
+    return { id: 'pup_' + Date.now(), ...updateData };
+  }
+}
+
+/**
+ * Subscribes to realtime progress updates
+ */
+export function subscribeToProgressUpdates(projectId, callback) {
+  if (!isFirebaseConfigured || !db) return () => {};
+
+  try {
+    const updatesRef = collection(db, 'progress_updates');
+    const q = projectId
+      ? query(updatesRef, where('projectId', '==', projectId), orderBy('createdAt', 'desc'))
+      : query(updatesRef, orderBy('createdAt', 'desc'));
+
+    return onSnapshot(q, (snapshot) => {
+      const items = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data()
+      }));
+      callback(items);
+    }, (err) => {
+      console.warn('Firestore progress updates subscription notice:', err);
+    });
+  } catch (error) {
+    console.warn('Error setting up progress updates subscription:', error);
+    return () => {};
   }
 }

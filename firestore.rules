@@ -231,7 +231,32 @@ service cloud.firestore {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // 7. DEFAULT CATCH-ALL
+    // 7. CONSTRUCTION IMAGES GALLERY
+    // ─────────────────────────────────────────────────────────────
+    match /construction_images/{imageId} {
+      // Authenticated customers, builders and admins can view construction images
+      allow read: if isAuthenticated();
+
+      // Only Builders and Administrators can upload progress verification images
+      allow create: if isBuilder() || isAdmin();
+
+      // Only the uploading Builder or Administrator can update or delete images
+      allow update, delete: if isAdmin() ||
+                               (isBuilder() && (resource.data.builderId == request.auth.uid || resource.data.builderEmail == request.auth.token.email));
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 8. PROGRESS UPDATES COLLECTION
+    // ─────────────────────────────────────────────────────────────
+    match /progress_updates/{updateId} {
+      allow read: if isAuthenticated();
+      allow create: if isBuilder() || isAdmin();
+      allow update, delete: if isAdmin() ||
+                               (isBuilder() && (resource.data.builderId == request.auth.uid || resource.data.builderEmail == request.auth.token.email));
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 9. DEFAULT CATCH-ALL
     // ─────────────────────────────────────────────────────────────
     // Deny all unauthenticated access and unknown collections
     match /{document=**} {
