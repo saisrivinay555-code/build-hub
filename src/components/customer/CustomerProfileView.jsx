@@ -46,7 +46,7 @@ export default function CustomerProfileView() {
         <div className="flex items-center justify-between border-b border-gray-100 pb-5">
           <div className="flex items-center gap-4">
             <img
-              src={currentUser.avatar}
+              src={currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'}
               alt={currentUser.name || 'Customer'}
               className="w-16 h-16 rounded-full object-cover ring-4 ring-purple-100"
             />

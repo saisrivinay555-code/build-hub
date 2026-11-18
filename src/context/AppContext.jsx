@@ -367,13 +367,13 @@ export function AppProvider({ children }) {
     const rawRole = (roleName || customData.role || '').toLowerCase();
     const canonicalRole = rawRole === 'builder' ? 'Builder' : (rawRole === 'admin' || rawRole === 'administrator' ? 'Administrator' : 'Customer');
 
-    let fallbackName = customData.name || (enteredEmail ? enteredEmail.split('@')[0] : (roleName === 'Administrator' ? 'Administrator' : roleName));
-    if (!fallbackName || fallbackName.toLowerCase() === 'conductor') {
-      fallbackName = canonicalRole === 'Customer' ? 'Customer' : canonicalRole;
+    let resolvedName = customData.name || (enteredEmail ? enteredEmail.split('@')[0] : (roleName === 'Administrator' ? 'Administrator' : roleName));
+    if (!resolvedName || resolvedName.toLowerCase() === 'conductor') {
+      resolvedName = canonicalRole === 'Customer' ? 'Customer' : canonicalRole;
     }
 
     const userData = {
-      name: fallbackName,
+      name: resolvedName,
       role: canonicalRole,
       email: enteredEmail,
       avatar: customData.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
