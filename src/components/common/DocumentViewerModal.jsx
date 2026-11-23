@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   X,
   ZoomIn,
@@ -8,26 +8,26 @@ import {
   Minimize2,
   Download,
   FileText,
-  Calendar,
-  CheckCircle2,
   ShieldCheck,
-  Building,
-  Printer,
-  Sparkles
+  Printer
 } from 'lucide-react';
 import { BLUEPRINT_VECTORS } from '../../data/documentsData';
 
 export default function DocumentViewerModal({ document: doc, isOpen, onClose }) {
+  if (!isOpen || !doc) return null;
+
+  return (
+    <DocumentViewerDialog
+      key={`${doc.id || 'doc'}`}
+      doc={doc}
+      onClose={onClose}
+    />
+  );
+}
+
+function DocumentViewerDialog({ doc, onClose }) {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
-
-  useEffect(() => {
-    // Reset zoom when modal opens or document changes
-    setZoomLevel(1);
-    setIsFullscreen(false);
-  }, [doc, isOpen]);
-
-  if (!isOpen || !doc) return null;
 
   const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.25, 3));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.5));
@@ -67,8 +67,8 @@ Category: ${doc.category || 'Official Document'}
 Version/Reference: ${doc.version || doc.receiptNumber || doc.billNumber || 'v1.0'}
 Date: ${doc.date || new Date().toLocaleDateString()}
 Status: ${doc.status || 'Verified'}
-Project: Residential Villa (Plot 42, Jubilee Hills Ext., Hyderabad)
-Customer: Sai Attada
+Project: ${doc.projectName || 'Dream Villa (Hyderabad)'}
+Customer: ${doc.customerName || 'Ramesh Kumar'}
 Builder: ${doc.builderName || 'Ravi Constructions'}
 ----------------------------------------
 ${doc.description || 'Verified authentic document stored in Build Hub cloud.'}
