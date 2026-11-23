@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, UploadCloud, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import confetti from 'canvas-confetti';
 
-export default function BuilderDocumentUploadModal({ 
-  isOpen, 
-  onClose, 
-  initialCategory = 'plans', 
-  initialProjectId = null 
+function BuilderDocumentUploadForm({
+  onClose,
+  initialCategory = 'plans',
+  initialProjectId = null
 }) {
   const { myProjects, uploadProjectDocument } = useApp();
 
-  const [selectedProjectId, setSelectedProjectId] = useState(initialProjectId || myProjects[0]?.id || 'bp1');
+  const [selectedProjectId, setSelectedProjectId] = useState(
+    initialProjectId || myProjects[0]?.id || 'bp1'
+  );
   const [category, setCategory] = useState(initialCategory || 'plans');
   const [docTitle, setDocTitle] = useState('');
   const [version, setVersion] = useState('Version 1.0');
@@ -21,15 +22,6 @@ export default function BuilderDocumentUploadModal({
   const [filePreview, setFilePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-
-  useEffect(() => {
-    if (isOpen) {
-      if (initialCategory) setCategory(initialCategory);
-      if (initialProjectId) setSelectedProjectId(initialProjectId);
-    }
-  }, [isOpen, initialCategory, initialProjectId]);
-
-  if (!isOpen) return null;
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -74,12 +66,6 @@ export default function BuilderDocumentUploadModal({
       setTimeout(() => {
         setSuccessMessage('');
         onClose();
-        setDocTitle('');
-        setVersion('Version 1.0');
-        setAmount('');
-        setDescription('');
-        setSelectedFile(null);
-        setFilePreview(null);
       }, 1200);
     } catch (err) {
       console.error('Error uploading document:', err);
@@ -104,6 +90,7 @@ export default function BuilderDocumentUploadModal({
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-1.5 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer"
           >
@@ -317,4 +304,23 @@ export default function BuilderDocumentUploadModal({
     </div>
   );
 }
+
+export default function BuilderDocumentUploadModal({ 
+  isOpen, 
+  onClose, 
+  initialCategory = 'plans', 
+  initialProjectId = null 
+}) {
+  if (!isOpen) return null;
+
+  return (
+    <BuilderDocumentUploadForm
+      key={`${initialCategory}_${initialProjectId || 'default'}`}
+      onClose={onClose}
+      initialCategory={initialCategory}
+      initialProjectId={initialProjectId}
+    />
+  );
+}
+
 

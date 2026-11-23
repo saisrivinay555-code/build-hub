@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, CheckCircle, Home } from 'lucide-react';
+import { User, CheckCircle } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export default function CustomerProfileView() {
