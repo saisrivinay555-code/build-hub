@@ -19,17 +19,17 @@ import {
   builderVillaBannerImg,
   builderAvatarImg
 } from '../data/initialData';
-import { 
-  signInAsDemoRole, 
-  signInUser, 
-  registerUser, 
+import {
+  signInAsDemoRole,
+  signInUser,
+  registerUser,
   signOutUser,
   onAuthChange,
   getUserProfile,
   signInWithGoogle,
   signInWithMicrosoft
 } from '../services/firebase/authService';
-import { 
+import {
   createBuilderBookingInFirestore,
   updateBookingStatusInFirestore,
   saveConstructionImageToFirestore,
@@ -42,18 +42,18 @@ import {
   subscribeToProjectDocuments
 } from '../services/firebase/firestoreService';
 import { INITIAL_PROJECT_DOCUMENTS } from '../data/documentsData';
-import { 
-  seedInitialDataIfEmpty, 
-  subscribeToProjects, 
+import {
+  seedInitialDataIfEmpty,
+  subscribeToProjects,
   subscribeToCustomerProject,
-  updateProjectProgressInDb, 
-  addProjectToDb 
+  updateProjectProgressInDb,
+  addProjectToDb
 } from '../services/firebase/projectService';
-import { 
-  subscribeToAllBuilders, 
-  subscribeToAllCustomers, 
-  updateBuilderApproval, 
-  updateCustomerStatus 
+import {
+  subscribeToAllBuilders,
+  subscribeToAllCustomers,
+  updateBuilderApproval,
+  updateCustomerStatus
 } from '../services/firebase/userService';
 
 const AppContext = createContext();
@@ -61,7 +61,7 @@ const AppContext = createContext();
 export function AppProvider({ children }) {
   // Navigation tab (defaults to 'find-builders' for customer builder discovery)
   const [currentTab, setCurrentTab] = useState('find-builders');
-  
+
   // Authentication & Role Selection Flow
   // 'role-selection' | 'login-admin' | 'login-builder' | 'login-customer' | 'register-customer' | 'register-builder'
   const [authStep, setAuthStep] = useState('role-selection');
@@ -108,7 +108,7 @@ export function AppProvider({ children }) {
         if (parsed && parsed.name && parsed.name !== 'No Active Project') {
           return parsed;
         }
-      } catch {}
+      } catch { }
     }
     return CUSTOMER_PROJECT_DATA;
   });
@@ -119,7 +119,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return CUSTOMER_PROGRESS_STAGES;
   });
@@ -130,7 +130,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return CUSTOMER_RECENT_UPDATES;
   });
@@ -141,7 +141,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return CUSTOMER_DOCUMENTS;
   });
@@ -152,7 +152,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return CUSTOMER_PAYMENTS;
   });
@@ -163,7 +163,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return CUSTOMER_CHAT_MESSAGES;
   });
@@ -174,7 +174,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return CUSTOMER_NOTIFICATIONS;
   });
@@ -211,7 +211,7 @@ export function AppProvider({ children }) {
             return p;
           });
         }
-      } catch {}
+      } catch { }
     }
     return BUILDER_MY_PROJECTS;
   });
@@ -233,7 +233,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return BUILDER_CUSTOMER_REQUESTS;
   });
@@ -244,7 +244,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return INITIAL_CUSTOMERS;
   });
@@ -255,7 +255,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return INITIAL_BUILDERS;
   });
@@ -266,7 +266,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return INITIAL_WORKERS;
   });
@@ -284,7 +284,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return INITIAL_CONSTRUCTION_IMAGES;
   });
@@ -295,7 +295,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return INITIAL_PROGRESS_UPDATES;
   });
@@ -307,7 +307,7 @@ export function AppProvider({ children }) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch {}
+      } catch { }
     }
     return INITIAL_PROJECT_DOCUMENTS;
   });
@@ -339,7 +339,7 @@ export function AppProvider({ children }) {
         parsed.name = parsed.role === 'Customer' ? 'Customer' : (parsed.role || 'Customer');
         localStorage.setItem('buildhub_user_v5', JSON.stringify(parsed));
         setCurrentUser(parsed);
-      } catch {}
+      } catch { }
     }
 
     // If customer project is empty or "No Active Project", seed with comprehensive demo project
@@ -463,7 +463,7 @@ export function AppProvider({ children }) {
   // ─── FIREBASE REALTIME SYNC ───
   useEffect(() => {
     // Seed initial demo data to Firestore if database is empty
-    seedInitialDataIfEmpty().catch(() => {});
+    seedInitialDataIfEmpty().catch(() => { });
 
     // 1. Realtime listener for Firestore projects
     const unsubscribeProjects = subscribeToProjects((remoteProjects) => {
@@ -487,7 +487,7 @@ export function AppProvider({ children }) {
     });
 
     // 4. Realtime listener for Customer project if one exists
-    let unsubscribeCustomer = () => {};
+    let unsubscribeCustomer = () => { };
     if (customerProject?.id) {
       unsubscribeCustomer = subscribeToCustomerProject(customerProject.id, (remoteCustProj) => {
         if (remoteCustProj) {
@@ -590,14 +590,14 @@ export function AppProvider({ children }) {
     // Authenticate with Firebase Auth and sync user profile
     signInAsDemoRole(roleName, userData).then(({ profile }) => {
       if (profile && profile.uid) {
-        setCurrentUser((prev) => ({ 
-          ...prev, 
-          firebaseUid: profile.uid, 
+        setCurrentUser((prev) => ({
+          ...prev,
+          firebaseUid: profile.uid,
           uid: profile.uid,
           role: canonicalRole // preserve role strictly
         }));
       }
-    }).catch(() => {});
+    }).catch(() => { });
   };
 
   const logout = async () => {
@@ -617,8 +617,8 @@ export function AppProvider({ children }) {
   const loginWithGoogle = async (targetRole = 'customer') => {
     const { user, profile } = await signInWithGoogle(targetRole);
     const isTargetBuilder = (targetRole || '').toLowerCase() === 'builder';
-    const canonicalRole = isTargetBuilder 
-      ? 'Builder' 
+    const canonicalRole = isTargetBuilder
+      ? 'Builder'
       : ((profile?.role || '').toLowerCase() === 'admin' ? 'Administrator' : 'Customer');
 
     const userData = {
@@ -645,8 +645,8 @@ export function AppProvider({ children }) {
   const loginWithMicrosoft = async (targetRole = 'customer') => {
     const { user, profile } = await signInWithMicrosoft(targetRole);
     const isTargetBuilder = (targetRole || '').toLowerCase() === 'builder';
-    const canonicalRole = isTargetBuilder 
-      ? 'Builder' 
+    const canonicalRole = isTargetBuilder
+      ? 'Builder'
       : ((profile?.role || '').toLowerCase() === 'admin' ? 'Administrator' : 'Customer');
 
     const userData = {
@@ -730,7 +730,7 @@ export function AppProvider({ children }) {
 
   const addProject = (newProject) => {
     setMyProjects([newProject, ...myProjects]);
-    addProjectToDb(newProject).catch(() => {});
+    addProjectToDb(newProject).catch(() => { });
   };
 
   const addCustomer = (newCustomer) => {
@@ -739,7 +739,7 @@ export function AppProvider({ children }) {
 
   const updateProjectProgress = (id, newProgress) => {
     setMyProjects(myProjects.map(p => p.id === id ? { ...p, progress: Number(newProgress) } : p));
-    updateProjectProgressInDb(id, newProgress).catch(() => {});
+    updateProjectProgressInDb(id, newProgress).catch(() => { });
   };
 
   const toggleProjectMilestone = (projectId, milestoneIdx) => {
@@ -791,7 +791,7 @@ export function AppProvider({ children }) {
     setCustomerRequests(customerRequests.map(r => r.id === id ? { ...r, status: newStatus } : r));
     // Also update any matching booking
     setBookings(prev => prev.map(b => (b.id === id || b.requestId === id) ? { ...b, status: newStatus } : b));
-    updateBookingStatusInFirestore(id, newStatus).catch(() => {});
+    updateBookingStatusInFirestore(id, newStatus).catch(() => { });
   };
 
   // Place a new builder booking
@@ -858,11 +858,11 @@ export function AppProvider({ children }) {
     uploadDate = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
     images = [] // Array of base64 data URLs or image URLs
   }) => {
-    const builderName = currentUser?.role?.toLowerCase() === 'builder' 
-      ? (currentUser?.name || currentUser?.company || 'Ravi Constructions') 
+    const builderName = currentUser?.role?.toLowerCase() === 'builder'
+      ? (currentUser?.name || currentUser?.company || 'Ravi Constructions')
       : (customerProject?.builderName || 'Ravi Constructions');
-    const builderId = currentUser?.role?.toLowerCase() === 'builder' 
-      ? (currentUser?.uid || 'b-ravi') 
+    const builderId = currentUser?.role?.toLowerCase() === 'builder'
+      ? (currentUser?.uid || 'b-ravi')
       : (customerProject?.builderId || 'b-ravi');
 
     const createdImages = [];

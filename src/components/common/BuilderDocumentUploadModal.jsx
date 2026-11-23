@@ -2,62 +2,13 @@ import React, { useState } from 'react';
 import { X, UploadCloud, CheckCircle2, FileText, Trash2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import confetti from 'canvas-confetti';
-
-const BLUEPRINT_CATEGORIES = [
-  'Floor Plan',
-  'Elevation Plan',
-  'Structural Plan',
-  'Site Layout Plan',
-  'Foundation Plan',
-  'Electrical Layout',
-  'Plumbing Layout',
-  'Interior Layout',
-  'Architectural Drawings',
-  'Construction Agreement',
-  'Building Approvals',
-  'Other Architectural Plan'
-];
-
-const RECEIPT_CATEGORIES = [
-  'Advance Payment Receipt',
-  'Customer Payment Receipt',
-  'Material Purchase Receipt',
-  'Labour Payment Receipt',
-  'Equipment Purchase Receipt',
-  'Other Payment Receipt'
-];
-
-const BILL_CATEGORIES = [
-  'Construction Quotation',
-  'Material Cost Breakdown',
-  'Labour Cost Breakdown',
-  'Additional Expenses',
-  'Construction Stage Bill',
-  'Final Project Invoice'
-];
-
-const OTHER_CATEGORIES = [
-  'Construction Agreement',
-  'Municipal Approval',
-  'Building Permit',
-  'Land Documents',
-  'Quality Test Report',
-  'Legal Documents',
-  'Other Supporting Document'
-];
-
-function getVectorKeyFromTitle(title = '') {
-  const t = title.toLowerCase();
-  if (t.includes('floor')) return 'floor-plan';
-  if (t.includes('elevation')) return 'elevation-plan';
-  if (t.includes('structural')) return 'structural-plan';
-  if (t.includes('site') || t.includes('layout')) return 'site-layout';
-  if (t.includes('electric')) return 'electrical-plan';
-  if (t.includes('plumb')) return 'plumbing-plan';
-  if (t.includes('foundation')) return 'foundation-plan';
-  if (t.includes('interior')) return 'interior-layout';
-  return null;
-}
+import {
+  BLUEPRINT_CATEGORIES,
+  RECEIPT_CATEGORIES,
+  BILL_CATEGORIES,
+  OTHER_CATEGORIES,
+  getVectorKeyFromTitle
+} from '../../data/documentsData';
 
 export default function BuilderDocumentUploadModal({ 
   isOpen, 
@@ -65,27 +16,10 @@ export default function BuilderDocumentUploadModal({
   initialCategory = 'plans', 
   initialProjectId = null 
 }) {
-  if (!isOpen) return null;
-
-  return (
-    <BuilderDocumentUploadDialog
-      key={`${initialCategory}_${initialProjectId || 'default'}`}
-      onClose={onClose}
-      initialCategory={initialCategory}
-      initialProjectId={initialProjectId}
-    />
-  );
-}
-
-function BuilderDocumentUploadDialog({
-  onClose,
-  initialCategory = 'plans',
-  initialProjectId = null
-}) {
   const { myProjects, uploadProjectDocument } = useApp();
 
   const [selectedProjectId, setSelectedProjectId] = useState(
-    initialProjectId || myProjects[0]?.id || 'bp1'
+    initialProjectId || myProjects?.[0]?.id || 'bp1'
   );
   const [section, setSection] = useState(initialCategory || 'plans');
   const [specificCategory, setSpecificCategory] = useState(() => {
@@ -116,6 +50,8 @@ function BuilderDocumentUploadDialog({
   const [filePreview, setFilePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  if (!isOpen) return null;
 
   const handleSectionChange = (newSection) => {
     setSection(newSection);
@@ -173,7 +109,7 @@ function BuilderDocumentUploadDialog({
 
     setIsSubmitting(true);
     try {
-      const targetProject = myProjects.find(p => p.id === selectedProjectId) || myProjects[0];
+      const targetProject = (myProjects || []).find(p => p.id === selectedProjectId) || myProjects?.[0] || {};
       const vectorKey = getVectorKeyFromTitle(docTitle);
 
       await uploadProjectDocument({
@@ -266,7 +202,7 @@ function BuilderDocumentUploadDialog({
                 onChange={(e) => setSelectedProjectId(e.target.value)}
                 className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[#101D3A] font-semibold focus:outline-none focus:border-[#7428E8]"
               >
-                {myProjects.length > 0 ? (
+                {(myProjects || []).length > 0 ? (
                   myProjects.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name} ({p.customer || 'Assigned Customer'}) • {p.location || 'Site'}

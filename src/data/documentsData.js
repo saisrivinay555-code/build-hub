@@ -1020,3 +1020,60 @@ export const INITIAL_PROJECT_DOCUMENTS = [
   }
 ];
 
+export const BLUEPRINT_CATEGORIES = [
+  'Floor Plan',
+  'Elevation Plan',
+  'Structural Plan',
+  'Site Layout Plan',
+  'Foundation Plan',
+  'Electrical Layout',
+  'Plumbing Layout',
+  'Interior Layout',
+  'Architectural Drawings',
+  'Construction Agreement',
+  'Building Approvals',
+  'Other Architectural Plan'
+];
+
+export const RECEIPT_CATEGORIES = [
+  'Advance Payment Receipt',
+  'Customer Payment Receipt',
+  'Material Purchase Receipt',
+  'Labour Payment Receipt',
+  'Equipment Purchase Receipt',
+  'Other Payment Receipt'
+];
+
+export const BILL_CATEGORIES = [
+  'Construction Quotation',
+  'Material Cost Breakdown',
+  'Labour Cost Breakdown',
+  'Additional Expenses',
+  'Construction Stage Bill',
+  'Final Project Invoice'
+];
+
+export const OTHER_CATEGORIES = [
+  'Construction Agreement',
+  'Municipal Approval',
+  'Building Permit',
+  'Land Documents',
+  'Quality Test Report',
+  'Legal Documents',
+  'Other Supporting Document'
+];
+
+export function getVectorKeyFromTitle(title = '') {
+  const t = (title || '').toLowerCase();
+  if (t.includes('floor')) return 'floor-plan';
+  if (t.includes('elevation')) return 'elevation-plan';
+  if (t.includes('structural')) return 'structural-plan';
+  if (t.includes('site') || t.includes('layout')) return 'site-layout';
+  if (t.includes('electric')) return 'electrical-plan';
+  if (t.includes('plumb')) return 'plumbing-plan';
+  if (t.includes('foundation')) return 'foundation-plan';
+  if (t.includes('interior')) return 'interior-layout';
+  return null;
+}
+
+

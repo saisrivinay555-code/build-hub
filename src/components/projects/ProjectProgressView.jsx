@@ -1190,6 +1190,7 @@ ${doc.description || 'Verified authentic structural specification stored in Buil
 
       {/* 1. Document Viewer Modal */}
       <DocumentViewerModal
+        key={viewingDoc ? viewingDoc.id || 'viewing' : 'closed'}
         isOpen={Boolean(viewingDoc)}
         document={viewingDoc}
         onClose={() => setViewingDoc(null)}
@@ -1197,6 +1198,7 @@ ${doc.description || 'Verified authentic structural specification stored in Buil
 
       {/* 2. Builder Document Upload Modal */}
       <BuilderDocumentUploadModal
+        key={`${docUploadCategory}_${activeProject.id}_${isDocUploadOpen ? 'open' : 'closed'}`}
         isOpen={isDocUploadOpen}
         initialCategory={docUploadCategory}
         initialProjectId={activeProject.id}

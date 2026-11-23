@@ -13,9 +13,6 @@ import {
   ChevronLeft,
   ChevronRight,
   UploadCloud,
-  CheckCircle2,
-  Clock,
-  ShieldCheck,
   Building
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -548,6 +545,7 @@ ${doc.description || 'Verified authentic document.'}
 
       {/* ──────── 6. MODALS: DOCUMENT VIEWER & BUILDER UPLOAD ──────── */}
       <DocumentViewerModal
+        key={selectedDocForViewer ? selectedDocForViewer.id || 'viewing' : 'closed'}
         document={selectedDocForViewer}
         isOpen={isViewerOpen}
         onClose={() => {
@@ -557,6 +555,7 @@ ${doc.description || 'Verified authentic document.'}
       />
 
       <BuilderDocumentUploadModal
+        key={`cust_doc_upload_${isUploadModalOpen ? 'open' : 'closed'}`}
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
       />

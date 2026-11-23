@@ -14,20 +14,10 @@ import {
 import { BLUEPRINT_VECTORS } from '../../data/documentsData';
 
 export default function DocumentViewerModal({ document: doc, isOpen, onClose }) {
-  if (!isOpen || !doc) return null;
-
-  return (
-    <DocumentViewerDialog
-      key={`${doc.id || 'doc'}`}
-      doc={doc}
-      onClose={onClose}
-    />
-  );
-}
-
-function DocumentViewerDialog({ doc, onClose }) {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  if (!isOpen || !doc) return null;
 
   const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.25, 3));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.25, 0.5));
