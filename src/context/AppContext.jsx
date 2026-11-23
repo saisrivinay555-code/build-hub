@@ -338,7 +338,6 @@ export function AppProvider({ children }) {
         const parsed = JSON.parse(savedUserStr);
         parsed.name = parsed.role === 'Customer' ? 'Customer' : (parsed.role || 'Customer');
         localStorage.setItem('buildhub_user_v5', JSON.stringify(parsed));
-        setCurrentUser(parsed);
       } catch { }
     }
 
@@ -346,7 +345,6 @@ export function AppProvider({ children }) {
     const savedCustProj = localStorage.getItem('buildhub_customer_project_v5');
     if (!savedCustProj || savedCustProj.includes('"No Active Project"')) {
       localStorage.setItem('buildhub_customer_project_v5', JSON.stringify(CUSTOMER_PROJECT_DATA));
-      setCustomerProject(CUSTOMER_PROJECT_DATA);
     }
   }, []);
 

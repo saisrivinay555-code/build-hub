@@ -446,19 +446,21 @@ ${doc.description || 'Verified authentic structural specification stored in Buil
             )}
           </div>
 
-          {/* Center: Current Phase & Progress Bar */}
-          <div className="flex-1 max-w-md space-y-1.5">
-            <div className="flex items-center justify-between text-xs font-bold">
-              <span className="text-[#7428E8]">
-                Current Phase: <span className="font-extrabold">{activeProject.phase || 'Interior & Finishing'}</span>
-              </span>
-              <span className="text-[#7428E8] font-mono text-sm">{activeProject.progress || 72}%</span>
+          {/* Center: Current Phase & Progress Bar matching reference mockup */}
+          <div className="flex-1 max-w-md flex flex-col items-center justify-center space-y-2">
+            <div className="inline-flex items-center px-3.5 py-0.5 rounded-full bg-[#F4EBFF] border border-[#E9D5FF] text-[#7428E8] text-xs font-bold">
+              <span>Current Phase: {activeProject.phase || 'Interior & Finishing'}</span>
             </div>
-            <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[#7428E8] to-[#9B5CFF] rounded-full transition-all duration-500"
-                style={{ width: `${activeProject.progress || 72}%` }}
-              />
+            <div className="w-full flex items-center gap-3">
+              <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#7428E8] to-[#9B5CFF] rounded-full transition-all duration-500"
+                  style={{ width: `${activeProject.progress || 72}%` }}
+                />
+              </div>
+              <span className="text-xs sm:text-sm font-extrabold text-[#7428E8] font-mono shrink-0">
+                {activeProject.progress || 72}%
+              </span>
             </div>
           </div>
 
@@ -467,11 +469,9 @@ ${doc.description || 'Verified authentic structural specification stored in Buil
             <div className="w-12 h-12 rounded-2xl bg-[#F4EBFF] text-[#7428E8] flex items-center justify-center shrink-0">
               <Calendar size={22} className="stroke-[2.2]" />
             </div>
-            <div>
-              <span className="text-xs sm:text-sm font-medium text-gray-500 block">
-                Target Handover
-              </span>
-              <span className="text-xs sm:text-sm font-extrabold text-[#101D3A]">
+            <div className="text-xs sm:text-sm">
+              <span className="font-semibold text-gray-700">Target Handover: </span>
+              <span className="font-extrabold text-[#101D3A]">
                 {activeProject.targetHandover || activeProject.deadline || '30 Aug 2026'}
               </span>
             </div>
@@ -1167,7 +1167,7 @@ ${doc.description || 'Verified authentic structural specification stored in Buil
               <div>
                 <h5 className="text-xs font-extrabold text-[#101D3A]">Need Help?</h5>
                 <p className="text-[11px] text-gray-600 leading-tight mt-0.5">
-                  Contact customer or team for any document-related queries.
+                  Contact your assigned builder for any document-related queries.
                 </p>
               </div>
             </div>
@@ -1178,7 +1178,7 @@ ${doc.description || 'Verified authentic structural specification stored in Buil
               className="w-full py-2.5 px-3 rounded-xl bg-[#7428E8] hover:bg-[#6415C5] text-white text-xs font-bold flex items-center justify-center gap-2 transition cursor-pointer shadow-xs"
             >
               <MessageSquare size={14} />
-              <span>Contact Customer</span>
+              <span>Contact Builder</span>
             </button>
           </div>
         </div>
