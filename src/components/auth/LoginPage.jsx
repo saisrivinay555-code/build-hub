@@ -15,22 +15,16 @@ import {
   Shield, 
   Check, 
   ArrowRight,
-  Sparkles,
   X,
   TrendingUp,
   ShieldCheck,
   ArrowLeft,
-  Phone,
-  Mail,
-  MapPin,
-  FileCheck2,
   UserPlus,
   Star,
   Calendar
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import confetti from 'canvas-confetti';
-import buildHubLogoImg from '../../assets/buildhub-logo.png';
 import buildHubBrandHeaderImg from '../../assets/buildhub-brand-hires-trans.png';
 import customerLoginIconImg from '../../assets/customer-login-icon.png';
 import loginBuildingImg from '../../assets/login-building.png';
@@ -40,7 +34,6 @@ export default function LoginPage() {
     authStep, 
     setAuthStep, 
     loginAsRole, 
-    addBuilder,
     registerUser,
     loginWithGoogle,
     loginWithMicrosoft
@@ -96,18 +89,26 @@ export default function LoginPage() {
     }
   };
 
-  const handleLoginSubmit = (roleName) => {
+  const handleLoginSubmit = async (roleName) => {
     setAuthError('');
     setAuthSuccess('');
-    loginAsRole(roleName, {
-      email: emailOrUsername,
-      password: password
-    });
-    confetti({
-      particleCount: 50,
-      spread: 60,
-      origin: { y: 0.6 }
-    });
+    setIsSubmitting(true);
+    try {
+      await loginAsRole(roleName, {
+        email: emailOrUsername,
+        password: password
+      });
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 }
+      });
+    } catch (err) {
+      console.error('Login submit error:', err);
+      setAuthError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCustomerRegisterSubmit = async (e) => {
@@ -565,7 +566,7 @@ export default function LoginPage() {
                     setAuthError('');
                     setIsSubmitting(true);
                     try {
-                      await loginWithGoogle();
+                      await loginWithGoogle('customer');
                       confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
                     } catch (err) {
                       console.error('Google login error:', err);
@@ -601,7 +602,7 @@ export default function LoginPage() {
                     setAuthError('');
                     setIsSubmitting(true);
                     try {
-                      await loginWithMicrosoft();
+                      await loginWithMicrosoft('customer');
                       confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
                     } catch (err) {
                       console.error('Microsoft login error:', err);
@@ -1437,6 +1438,20 @@ export default function LoginPage() {
               </p>
             </div>
 
+            {/* Error / Success Messages */}
+            {authError && (
+              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+                <X size={15} className="text-red-500 shrink-0" />
+                <span>{authError}</span>
+              </div>
+            )}
+            {authSuccess && (
+              <div className="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold flex items-center gap-2">
+                <Check size={15} className="text-emerald-500 shrink-0" />
+                <span>{authSuccess}</span>
+              </div>
+            )}
+
             <form onSubmit={(e) => { e.preventDefault(); handleLoginSubmit('Administrator'); }} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1.5">
@@ -1503,17 +1518,49 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="w-full py-3.5 px-4 bg-[#092257] hover:bg-[#07183d] text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 cursor-pointer mt-2"
+                disabled={isSubmitting}
+                className="w-full py-3.5 px-4 bg-[#092257] hover:bg-[#07183d] disabled:opacity-60 text-white font-bold rounded-xl text-sm transition-all shadow-md shadow-blue-900/20 flex items-center justify-center gap-2 cursor-pointer mt-2"
               >
-                <LogIn size={18} />
-                <span>Login as Administrator</span>
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Authenticating...</span>
+                  </>
+                ) : (
+                  <>
+                    <LogIn size={18} />
+                    <span>Login as Administrator</span>
+                  </>
+                )}
               </button>
             </form>
+
+            {/* Direct Switch to Customer / Builder */}
+            <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-center gap-3 text-xs font-semibold text-gray-500">
+              <button
+                type="button"
+                onClick={() => handleSelectRole('customer')}
+                className="text-[#6415C5] hover:underline cursor-pointer"
+              >
+                Customer Login
+              </button>
+              <span className="text-gray-300">•</span>
+              <button
+                type="button"
+                onClick={() => handleSelectRole('builder')}
+                className="text-blue-600 hover:underline cursor-pointer"
+              >
+                Builder Login
+              </button>
+            </div>
 
             <button
               type="button"
               onClick={() => setAuthStep('role-selection')}
-              className="w-full mt-6 text-center text-xs font-bold text-gray-500 hover:text-gray-800 transition flex items-center justify-center gap-1 cursor-pointer"
+              className="w-full mt-3 text-center text-xs font-bold text-gray-500 hover:text-gray-800 transition flex items-center justify-center gap-1 cursor-pointer"
             >
               <ArrowLeft size={14} />
               <span>Back to Role Selection</span>
