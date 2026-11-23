@@ -136,6 +136,16 @@ export default function ProjectProgressView() {
     ];
   }, [activeProject]);
 
+  // Calculated milestone progress track width (clean & deterministic for all JSX parsers)
+  const milestoneProgressWidth = useMemo(() => {
+    if (milestones[4]?.completed) return 100;
+    if (milestones[3]?.completed) return 75;
+    if (milestones[2]?.completed) return 50;
+    if (milestones[1]?.completed) return 50;
+    if (milestones[0]?.completed) return 25;
+    return 0;
+  }, [milestones]);
+
   const handleMilestoneClick = (index) => {
     if (toggleProjectMilestone) {
       toggleProjectMilestone(activeProject.id, index);
@@ -487,21 +497,7 @@ ${doc.description || 'Verified authentic structural specification stored in Buil
             <div className="absolute top-5 left-8 right-8 h-1 bg-gray-200 -z-0">
               <div
                 className="h-full bg-[#7428E8] transition-all duration-500"
-                style={{
-                  width: `${
-                    milestones[4].completed
-                      ? 100
-                      : milestones[3].completed
-                      ? 75
-                      : milestones[2].completed
-                      ? 50
-                      : milestones[1].completed
-                      ? 50 // active stage 3 is In Progress
-                      : milestones[0].completed
-                      ? 25
-                      : 0
-                  }%`
-                }}
+                style={{ width: `${milestoneProgressWidth}%` }}
               />
             </div>
 
