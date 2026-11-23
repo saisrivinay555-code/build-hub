@@ -19,15 +19,39 @@ import { db, isFirebaseConfigured } from './firebaseConfig';
 import { 
   INITIAL_ADMIN_PROJECTS, 
   CUSTOMER_PROJECT_DATA, 
-  CUSTOMER_PROGRESS_STAGES,
-  INITIAL_BUILDER_CUSTOMERS,
-  INITIAL_BUILDERS
+  CUSTOMER_PROGRESS_STAGES
 } from '../../data/initialData';
 
 /**
- * No-op: Demo seeding removed per user request so the project starts with a clean database.
+ * Seeds initial demo projects to Firestore if the collection is currently empty
  */
 export async function seedInitialDataIfEmpty() {
+  if (!isFirebaseConfigured || !db) return false;
+
+  try {
+    const projectsRef = collection(db, 'projects');
+    const snap = await getDocs(query(projectsRef, limit(1)));
+    if (snap.empty) {
+      for (const proj of INITIAL_ADMIN_PROJECTS) {
+        await setDoc(doc(db, 'projects', proj.id), {
+          ...proj,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+      }
+
+      await setDoc(doc(db, 'projects', CUSTOMER_PROJECT_DATA.id), {
+        ...CUSTOMER_PROJECT_DATA,
+        stages: CUSTOMER_PROGRESS_STAGES,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+
+      return true;
+    }
+  } catch (err) {
+    console.warn('Notice seeding demo projects in Firestore:', err.message);
+  }
   return false;
 }
 

@@ -297,6 +297,303 @@ export const BLUEPRINT_VECTORS = {
       <text x="440" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">LOCATION: JUBILEE HILLS EXT., HYDERABAD</text>
       <text x="440" y="523" fill="#10B981" font-size="9" font-family="monospace">TOTAL SITE AREA: 266.6 SQ.YDS (2,400 SQ.FT)</text>
     </svg>
+  `,
+
+  'electrical-plan': `
+    <svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" className="w-full h-full bg-[#0E1E38] text-white select-none">
+      <defs>
+        <pattern id="gridElec" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1E3A66" stroke-width="0.5" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="#0A182F" />
+      <rect width="100%" height="100%" fill="url(#gridElec)" />
+      
+      <rect x="70" y="50" width="660" height="420" fill="none" stroke="#60A5FA" stroke-width="3" />
+      <line x1="330" y1="50" x2="330" y2="470" stroke="#60A5FA" stroke-width="2" />
+      <line x1="560" y1="50" x2="560" y2="470" stroke="#60A5FA" stroke-width="2" />
+      <line x1="70" y1="260" x2="330" y2="260" stroke="#60A5FA" stroke-width="2" />
+      <line x1="330" y1="320" x2="560" y2="320" stroke="#60A5FA" stroke-width="2" />
+
+      <!-- Main Distribution Board (MDB) -->
+      <rect x="75" y="70" width="36" height="50" fill="#EF4444" stroke="#FCA5A5" stroke-width="2" />
+      <text x="80" y="100" fill="#FFFFFF" font-size="10" font-weight="bold" font-family="monospace">MDB</text>
+      <text x="120" y="95" fill="#EF4444" font-size="11" font-weight="bold" font-family="monospace">MAIN 3-PHASE SWITCHBOARD (63A)</text>
+
+      <!-- Inverter & Battery Station -->
+      <rect x="75" y="130" width="30" height="40" fill="#F59E0B" stroke="#FCD34D" stroke-width="1.5" />
+      <text x="80" y="155" fill="#000" font-size="9" font-weight="bold" font-family="monospace">INV</text>
+      <text x="115" y="155" fill="#FCD34D" font-size="10" font-family="monospace">5KVA HYBRID SOLAR INVERTER BACKUP</text>
+
+      <!-- Distribution Conduits -->
+      <path d="M 111 95 L 200 95 L 200 160 L 445 160 L 445 120" fill="none" stroke="#FACC15" stroke-width="2" stroke-dasharray="6,4" />
+      <path d="M 200 160 L 200 360 L 445 360" fill="none" stroke="#FACC15" stroke-width="2" stroke-dasharray="6,4" />
+      <path d="M 445 160 L 645 160" fill="none" stroke="#FACC15" stroke-width="2" stroke-dasharray="6,4" />
+      <path d="M 645 160 L 645 360" fill="none" stroke="#FACC15" stroke-width="2" stroke-dasharray="6,4" />
+
+      <!-- Fixtures -->
+      <circle cx="200" cy="150" r="16" fill="#1E293B" stroke="#38BDF8" stroke-width="2" />
+      <line x1="188" y1="150" x2="212" y2="150" stroke="#38BDF8" stroke-width="2" />
+      <line x1="200" y1="138" x2="200" y2="162" stroke="#38BDF8" stroke-width="2" />
+      <text x="175" y="180" fill="#93C5FD" font-size="10" font-family="monospace">MBR FAN (52")</text>
+
+      <circle cx="445" cy="180" r="22" fill="#1E293B" stroke="#F59E0B" stroke-width="2.5" />
+      <circle cx="445" cy="180" r="8" fill="#F59E0B" />
+      <text x="400" y="218" fill="#FCD34D" font-size="10" font-weight="bold" font-family="monospace">LIVING CHANDELIER</text>
+
+      <circle cx="445" cy="390" r="16" fill="#1E293B" stroke="#38BDF8" stroke-width="2" />
+      <line x1="433" y1="390" x2="457" y2="390" stroke="#38BDF8" stroke-width="2" />
+      <line x1="445" y1="378" x2="445" y2="402" stroke="#38BDF8" stroke-width="2" />
+      <text x="415" y="420" fill="#93C5FD" font-size="10" font-family="monospace">DINING FAN</text>
+
+      <circle cx="645" cy="150" r="16" fill="#1E293B" stroke="#38BDF8" stroke-width="2" />
+      <line x1="633" y1="150" x2="657" y2="150" stroke="#38BDF8" stroke-width="2" />
+      <line x1="645" y1="138" x2="645" y2="162" stroke="#38BDF8" stroke-width="2" />
+      <text x="615" y="180" fill="#93C5FD" font-size="10" font-family="monospace">KITCHEN EXHAUST</text>
+
+      <circle cx="200" cy="360" r="16" fill="#1E293B" stroke="#38BDF8" stroke-width="2" />
+      <line x1="188" y1="360" x2="212" y2="360" stroke="#38BDF8" stroke-width="2" />
+      <line x1="200" y1="348" x2="200" y2="372" stroke="#38BDF8" stroke-width="2" />
+      <text x="175" y="390" fill="#93C5FD" font-size="10" font-family="monospace">BEDROOM 2 FAN</text>
+
+      <polygon points="310,70 325,95 295,95" fill="#10B981" stroke="#A7F3D0" stroke-width="1.5" />
+      <text x="245" y="85" fill="#A7F3D0" font-size="9" font-family="monospace">2.0T AC</text>
+
+      <polygon points="540,70 555,95 525,95" fill="#10B981" stroke="#A7F3D0" stroke-width="1.5" />
+      <text x="475" y="85" fill="#A7F3D0" font-size="9" font-family="monospace">2.5T DUAL AC</text>
+
+      <polygon points="310,380 325,405 295,405" fill="#10B981" stroke="#A7F3D0" stroke-width="1.5" />
+      <text x="245" y="395" fill="#A7F3D0" font-size="9" font-family="monospace">1.5T AC</text>
+
+      <circle cx="370" cy="120" r="5" fill="#38BDF8" />
+      <circle cx="520" cy="120" r="5" fill="#38BDF8" />
+      <circle cx="370" cy="240" r="5" fill="#38BDF8" />
+      <circle cx="520" cy="240" r="5" fill="#38BDF8" />
+
+      <rect x="70" y="485" width="660" height="50" fill="#091428" stroke="#FACC15" stroke-width="1.5" />
+      <text x="85" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">PROJECT: RESIDENTIAL VILLA (4BHK)</text>
+      <text x="85" y="523" fill="#FACC15" font-size="9" font-family="monospace">DWG: ELECTRICAL CONDUITS, SWITCHBOARDS & LIGHTING LAYOUT</text>
+      <text x="440" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">ELECTRICAL CONSULTANT: TECH BUILDERS</text>
+      <text x="440" y="523" fill="#38BDF8" font-size="9" font-family="monospace">SPEC: COPPER FRLS CABLES | 3-PHASE 11KW CONNECTED LOAD</text>
+    </svg>
+  `,
+
+  'plumbing-plan': `
+    <svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" className="w-full h-full bg-[#0E1E38] text-white select-none">
+      <defs>
+        <pattern id="gridPlumb" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1E3A66" stroke-width="0.5" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="#0A182F" />
+      <rect width="100%" height="100%" fill="url(#gridPlumb)" />
+
+      <rect x="70" y="50" width="660" height="420" fill="none" stroke="#60A5FA" stroke-width="3" />
+      <line x1="330" y1="50" x2="330" y2="470" stroke="#60A5FA" stroke-width="2" />
+      <line x1="560" y1="50" x2="560" y2="470" stroke="#60A5FA" stroke-width="2" />
+      <line x1="70" y1="260" x2="330" y2="260" stroke="#60A5FA" stroke-width="2" />
+
+      <!-- Overhead Water Tank & Solar Geyser -->
+      <rect x="580" y="65" width="80" height="60" fill="#0284C7" stroke="#38BDF8" stroke-width="2" />
+      <text x="590" y="95" fill="#FFFFFF" font-size="10" font-weight="bold" font-family="monospace">OHT 2000L</text>
+      <text x="588" y="112" fill="#BAE6FD" font-size="8" font-family="monospace">OVERHEAD TANK</text>
+
+      <rect x="580" y="135" width="80" height="35" fill="#B91C1C" stroke="#F87171" stroke-width="2" />
+      <text x="590" y="157" fill="#FFFFFF" font-size="9" font-weight="bold" font-family="monospace">SOLAR 300LPD</text>
+
+      <!-- Cold Water CPVC Lines -->
+      <line x1="580" y1="95" x2="200" y2="95" stroke="#06B6D4" stroke-width="3" />
+      <line x1="200" y1="95" x2="200" y2="280" stroke="#06B6D4" stroke-width="3" />
+      <line x1="200" y1="280" x2="140" y2="280" stroke="#06B6D4" stroke-width="3" />
+      <circle cx="140" cy="280" r="6" fill="#06B6D4" />
+      <text x="155" y="275" fill="#67E8F9" font-size="9" font-family="monospace">COLD WATER INLET</text>
+
+      <!-- Hot Water Lines -->
+      <line x1="580" y1="150" x2="210" y2="150" stroke="#EF4444" stroke-width="2" stroke-dasharray="6,4" />
+      <line x1="210" y1="150" x2="210" y2="295" stroke="#EF4444" stroke-width="2" stroke-dasharray="6,4" />
+      <line x1="210" y1="295" x2="140" y2="295" stroke="#EF4444" stroke-width="2" stroke-dasharray="6,4" />
+      <circle cx="140" cy="295" r="6" fill="#EF4444" />
+      <text x="155" y="305" fill="#FCA5A5" font-size="9" font-family="monospace">HOT WATER SUPPLY</text>
+
+      <line x1="580" y1="95" x2="620" y2="95" stroke="#06B6D4" stroke-width="3" />
+      <line x1="620" y1="95" x2="620" y2="350" stroke="#06B6D4" stroke-width="3" />
+      <circle cx="620" cy="350" r="8" fill="#1E293B" stroke="#06B6D4" stroke-width="2" />
+      <text x="635" y="355" fill="#67E8F9" font-size="10" font-family="monospace">KITCHEN SINK</text>
+
+      <line x1="85" y1="260" x2="85" y2="450" stroke="#A855F7" stroke-width="4" />
+      <circle cx="85" cy="350" r="10" fill="#1E293B" stroke="#C084FC" stroke-width="2" />
+      <text x="100" y="355" fill="#E9D5FF" font-size="10" font-family="monospace">110mm SWR SOIL STACK</text>
+
+      <rect x="75" y="440" width="30" height="30" fill="#3B0764" stroke="#A855F7" stroke-width="2" />
+      <text x="82" y="460" fill="#FFFFFF" font-size="9" font-weight="bold" font-family="monospace">IC-1</text>
+
+      <line x1="105" y1="455" x2="400" y2="455" stroke="#A855F7" stroke-width="3" stroke-dasharray="8,4" />
+      <rect x="400" y="440" width="30" height="30" fill="#3B0764" stroke="#A855F7" stroke-width="2" />
+      <text x="407" y="460" fill="#FFFFFF" font-size="9" font-weight="bold" font-family="monospace">IC-2</text>
+
+      <line x1="430" y1="455" x2="710" y2="455" stroke="#A855F7" stroke-width="3" stroke-dasharray="8,4" />
+      <text x="470" y="445" fill="#C084FC" font-size="10" font-family="monospace">160mm MUNICIPAL SEWER CONNECTION</text>
+
+      <path d="M 700 70 L 700 400 L 650 400" fill="none" stroke="#10B981" stroke-width="2" stroke-dasharray="4,4" />
+      <circle cx="650" cy="400" r="14" fill="#065F46" stroke="#34D399" stroke-width="2" />
+      <text x="640" y="405" fill="#FFFFFF" font-size="9" font-weight="bold" font-family="monospace">RWH</text>
+
+      <rect x="70" y="485" width="660" height="50" fill="#091428" stroke="#06B6D4" stroke-width="1.5" />
+      <text x="85" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">PROJECT: RESIDENTIAL VILLA (4BHK)</text>
+      <text x="85" y="523" fill="#06B6D4" font-size="9" font-family="monospace">DWG: PLUMBING, DRAINAGE & WATER SUPPLY SCHEMATIC</text>
+      <text x="440" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">CONSULTANT: RAVI CONSTRUCTIONS</text>
+      <text x="440" y="523" fill="#34D399" font-size="9" font-family="monospace">CPVC SDR-11 CLASS 1 | ASTM D2846 COMPLIANT</text>
+    </svg>
+  `,
+
+  'foundation-plan': `
+    <svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" className="w-full h-full bg-[#0E1E38] text-white select-none">
+      <defs>
+        <pattern id="gridFound" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1E3A66" stroke-width="0.5" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="#0A182F" />
+      <rect width="100%" height="100%" fill="url(#gridFound)" />
+
+      <!-- Centerlines / Axes -->
+      <line x1="150" y1="60" x2="150" y2="440" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,4" />
+      <line x1="310" y1="60" x2="310" y2="440" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,4" />
+      <line x1="470" y1="60" x2="470" y2="440" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,4" />
+      <line x1="630" y1="60" x2="630" y2="440" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,4" />
+
+      <line x1="120" y1="100" x2="660" y2="100" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,4" />
+      <line x1="120" y1="210" x2="660" y2="210" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,4" />
+      <line x1="120" y1="320" x2="660" y2="320" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,4" />
+      <line x1="120" y1="410" x2="660" y2="410" stroke="#F59E0B" stroke-width="1" stroke-dasharray="6,4" />
+
+      <!-- Isolated Footings F1 to F16 -->
+      <rect x="125" y="75" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="140" y="90" width="20" height="20" fill="#EF4444" />
+      <text x="110" y="70" fill="#93C5FD" font-size="9" font-family="monospace">F1: 5'0"x5'0"</text>
+
+      <rect x="285" y="75" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="300" y="90" width="20" height="20" fill="#EF4444" />
+      <text x="270" y="70" fill="#93C5FD" font-size="9" font-family="monospace">F2: 5'0"x5'0"</text>
+
+      <rect x="445" y="75" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="460" y="90" width="20" height="20" fill="#EF4444" />
+      <text x="430" y="70" fill="#93C5FD" font-size="9" font-family="monospace">F3: 5'0"x5'0"</text>
+
+      <rect x="605" y="75" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="620" y="90" width="20" height="20" fill="#EF4444" />
+      <text x="590" y="70" fill="#93C5FD" font-size="9" font-family="monospace">F4: 5'0"x5'0"</text>
+
+      <rect x="125" y="185" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="140" y="200" width="20" height="20" fill="#EF4444" />
+
+      <rect x="285" y="185" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="300" y="200" width="20" height="20" fill="#EF4444" />
+
+      <rect x="445" y="185" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="460" y="200" width="20" height="20" fill="#EF4444" />
+
+      <rect x="605" y="185" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="620" y="200" width="20" height="20" fill="#EF4444" />
+
+      <rect x="125" y="295" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="140" y="310" width="20" height="20" fill="#EF4444" />
+
+      <rect x="285" y="295" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="300" y="310" width="20" height="20" fill="#EF4444" />
+
+      <rect x="445" y="295" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="460" y="310" width="20" height="20" fill="#EF4444" />
+
+      <rect x="605" y="295" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="620" y="310" width="20" height="20" fill="#EF4444" />
+
+      <rect x="125" y="385" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="140" y="400" width="20" height="20" fill="#EF4444" />
+
+      <rect x="285" y="385" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="300" y="400" width="20" height="20" fill="#EF4444" />
+
+      <rect x="445" y="385" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="460" y="400" width="20" height="20" fill="#EF4444" />
+
+      <rect x="605" y="385" width="50" height="50" fill="#1E293B" stroke="#60A5FA" stroke-width="2" />
+      <rect x="620" y="400" width="20" height="20" fill="#EF4444" />
+
+      <!-- Plinth Tie Beams -->
+      <rect x="145" y="98" width="490" height="4" fill="#10B981" />
+      <rect x="145" y="208" width="490" height="4" fill="#10B981" />
+      <rect x="145" y="318" width="490" height="4" fill="#10B981" />
+      <rect x="145" y="408" width="490" height="4" fill="#10B981" />
+
+      <rect x="148" y="98" width="4" height="310" fill="#10B981" />
+      <rect x="308" y="98" width="4" height="310" fill="#10B981" />
+      <rect x="468" y="98" width="4" height="310" fill="#10B981" />
+      <rect x="628" y="98" width="4" height="310" fill="#10B981" />
+
+      <rect x="50" y="485" width="700" height="50" fill="#091428" stroke="#38BDF8" stroke-width="1.5" />
+      <text x="65" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">PROJECT: RESIDENTIAL VILLA (4BHK)</text>
+      <text x="65" y="523" fill="#93C5FD" font-size="9" font-family="monospace">DWG: EXCAVATION & ISOLATED RCC FOOTING PLAN | DEPTH: -6'0"</text>
+      <text x="440" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">GEOTECH SPEC: SBC 220 kN/m²</text>
+      <text x="440" y="523" fill="#10B981" font-size="9" font-family="monospace">PCC 1:4:8 (4" THK) + M25 GRADE RCC FOOTING</text>
+    </svg>
+  `,
+
+  'interior-layout': `
+    <svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" className="w-full h-full bg-[#0E1E38] text-white select-none">
+      <defs>
+        <pattern id="gridInt" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1E3A66" stroke-width="0.5" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="#0A182F" />
+      <rect width="100%" height="100%" fill="url(#gridInt)" />
+
+      <rect x="70" y="50" width="660" height="420" fill="none" stroke="#60A5FA" stroke-width="3" />
+      <line x1="330" y1="50" x2="330" y2="470" stroke="#60A5FA" stroke-width="2" />
+      <line x1="560" y1="50" x2="560" y2="470" stroke="#60A5FA" stroke-width="2" />
+      <line x1="70" y1="260" x2="330" y2="260" stroke="#60A5FA" stroke-width="2" />
+
+      <!-- Master Bedroom Furniture -->
+      <rect x="120" y="80" width="130" height="150" fill="#1E293B" stroke="#C084FC" stroke-width="2" rx="6" />
+      <rect x="130" y="90" width="110" height="35" fill="#6B21A8" opacity="0.6" rx="4" />
+      <text x="140" y="165" fill="#E9D5FF" font-size="11" font-weight="bold" font-family="monospace">KING BED (6'x6.5')</text>
+      <rect x="85" y="90" width="25" height="25" fill="#3B0764" stroke="#A855F7" stroke-width="1" />
+      <rect x="260" y="90" width="25" height="25" fill="#3B0764" stroke="#A855F7" stroke-width="1" />
+
+      <rect x="80" y="270" width="240" height="35" fill="#334155" stroke="#94A3B8" stroke-width="1.5" />
+      <text x="120" y="292" fill="#F8FAFC" font-size="10" font-family="monospace">8-DOOR FLOOR-TO-CEILING WARDROBE</text>
+
+      <!-- Living Room Sofa Lounge -->
+      <rect x="360" y="80" width="170" height="60" fill="#1E293B" stroke="#38BDF8" stroke-width="2" rx="6" />
+      <rect x="360" y="150" width="170" height="40" fill="#0C4A6E" opacity="0.5" rx="4" />
+      <text x="405" y="175" fill="#E0F2FE" font-size="10" font-family="monospace">COFFEE TABLE</text>
+      <text x="390" y="115" fill="#BAE6FD" font-size="11" font-weight="bold" font-family="monospace">7-SEATER L-SECTIONAL</text>
+
+      <rect x="360" y="280" width="170" height="20" fill="#475569" stroke="#94A3B8" stroke-width="1" />
+      <text x="390" y="294" fill="#FFFFFF" font-size="9" font-family="monospace">ITALIAN FLUTED TV CONSOLE</text>
+
+      <!-- Modular Kitchen Island -->
+      <rect x="580" y="70" width="135" height="40" fill="#14532D" stroke="#22C55E" stroke-width="2" />
+      <text x="590" y="95" fill="#DCFCE7" font-size="10" font-weight="bold" font-family="monospace">QUARTZ COUNTER</text>
+
+      <rect x="590" y="150" width="115" height="60" fill="#14532D" stroke="#22C55E" stroke-width="2" rx="4" />
+      <text x="605" y="185" fill="#DCFCE7" font-size="10" font-family="monospace">ISLAND BREAKFAST</text>
+
+      <!-- Dining Table 6 Seater -->
+      <rect x="380" y="340" width="130" height="80" fill="#1E293B" stroke="#F59E0B" stroke-width="2" rx="6" />
+      <text x="395" y="385" fill="#FDE68A" font-size="11" font-weight="bold" font-family="monospace">6-SEATER DINING</text>
+      <rect x="400" y="325" width="25" height="10" fill="#78350F" />
+      <rect x="465" y="325" width="25" height="10" fill="#78350F" />
+      <rect x="400" y="425" width="25" height="10" fill="#78350F" />
+      <rect x="465" y="425" width="25" height="10" fill="#78350F" />
+
+      <rect x="70" y="485" width="660" height="50" fill="#091428" stroke="#C084FC" stroke-width="1.5" />
+      <text x="85" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">PROJECT: RESIDENTIAL VILLA (4BHK)</text>
+      <text x="85" y="523" fill="#C084FC" font-size="9" font-family="monospace">DWG: INTERIOR FURNITURE, MODULAR JOINERY & FITOUT DETAILS</text>
+      <text x="440" y="505" fill="#F8FAFC" font-size="11" font-weight="bold" font-family="monospace">DESIGNER: TECH BUILDERS INTERIORS</text>
+      <text x="440" y="523" fill="#34D399" font-size="9" font-family="monospace">SPEC: ACRYLIC LAMINATES | HAFFLE HARDWARE</text>
+    </svg>
   `
 };
 
@@ -376,7 +673,7 @@ export const INITIAL_PROJECT_DOCUMENTS = [
     title: 'Electrical Plan',
     name: 'Electrical Plan',
     previewUrl: floorPlanImg,
-    vectorKey: 'floor-plan',
+    vectorKey: 'electrical-plan',
     date: 'Aug 08, 2026',
     version: 'Version 1.0',
     type: 'Electrical Conduits',
@@ -393,7 +690,7 @@ export const INITIAL_PROJECT_DOCUMENTS = [
     title: 'Plumbing Plan',
     name: 'Plumbing Plan',
     previewUrl: floorPlanImg,
-    vectorKey: 'floor-plan',
+    vectorKey: 'plumbing-plan',
     date: 'Aug 05, 2026',
     version: 'Version 1.0',
     type: 'Sanitary & Water Supply',
@@ -410,7 +707,7 @@ export const INITIAL_PROJECT_DOCUMENTS = [
     title: 'Foundation Plan',
     name: 'Foundation Plan',
     previewUrl: structuralPlanImg,
-    vectorKey: 'structural-plan',
+    vectorKey: 'foundation-plan',
     date: 'Aug 02, 2026',
     version: 'Version 1.0',
     type: 'Civil Substructure',
@@ -427,7 +724,7 @@ export const INITIAL_PROJECT_DOCUMENTS = [
     title: 'Interior Layout Plan',
     name: 'Interior Layout Plan',
     previewUrl: elevationPlanImg,
-    vectorKey: 'elevation-plan',
+    vectorKey: 'interior-layout',
     date: 'Jul 28, 2026',
     version: 'Version 1.0',
     type: 'Interior Architecture',

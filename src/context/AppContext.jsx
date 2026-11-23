@@ -9,11 +9,9 @@ import {
   CUSTOMER_NOTIFICATIONS,
   BUILDER_CUSTOMER_REQUESTS,
   BUILDER_MY_PROJECTS,
-  INITIAL_BUILDER_CUSTOMERS,
   INITIAL_BUILDERS,
   INITIAL_CUSTOMERS,
   INITIAL_WORKERS,
-  INITIAL_ADMIN_PROJECTS,
   CHART_MONTHLY_OVERVIEW,
   FIND_BUILDERS_DATA,
   INITIAL_CONSTRUCTION_IMAGES,
@@ -99,89 +97,141 @@ export function AppProvider({ children }) {
     };
   });
 
-  // --- CUSTOMER DATA STATE (Clean empty states for real user data) ---
+  // --- CUSTOMER DATA STATE (With comprehensive demo data) ---
   const [customerProject, setCustomerProject] = useState(() => {
     const saved = localStorage.getItem('buildhub_customer_project_v5');
-    return saved ? JSON.parse(saved) : {
-      id: '',
-      name: 'No Active Project',
-      type: 'Not Specified',
-      builderName: 'Unassigned',
-      builderContact: '',
-      builderEmail: '',
-      builderAvatar: '',
-      builderStatus: 'Pending Assignment',
-      location: '',
-      address: 'No site address added yet',
-      startDate: 'Not Started',
-      expectedCompletion: 'TBD',
-      status: 'Pending',
-      progress: 0,
-      image: 'https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=1000&auto=format&fit=crop&q=80',
-      totalCost: '₹0',
-      totalCostNum: 0,
-      amountPaid: '₹0',
-      amountPaidNum: 0,
-      pendingAmount: '₹0',
-      pendingAmountNum: 0,
-      description: 'No active project description. You can create or link your project.'
-    };
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.name && parsed.name !== 'No Active Project') {
+          return parsed;
+        }
+      } catch {}
+    }
+    return CUSTOMER_PROJECT_DATA;
   });
 
   const [customerStages, setCustomerStages] = useState(() => {
     const saved = localStorage.getItem('buildhub_customer_stages_v5');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return CUSTOMER_PROGRESS_STAGES;
   });
 
   const [customerUpdates, setCustomerUpdates] = useState(() => {
     const saved = localStorage.getItem('buildhub_customer_updates_v5');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return CUSTOMER_RECENT_UPDATES;
   });
 
   const [customerDocuments, setCustomerDocuments] = useState(() => {
     const saved = localStorage.getItem('buildhub_customer_docs_v5');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return CUSTOMER_DOCUMENTS;
   });
 
   const [customerPayments, setCustomerPayments] = useState(() => {
     const saved = localStorage.getItem('buildhub_customer_payments_v5');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return CUSTOMER_PAYMENTS;
   });
 
   const [customerMessages, setCustomerMessages] = useState(() => {
     const saved = localStorage.getItem('buildhub_customer_messages_v5');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return CUSTOMER_CHAT_MESSAGES;
   });
 
   const [customerNotifications, setCustomerNotifications] = useState(() => {
     const saved = localStorage.getItem('buildhub_customer_notifs_v5');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return CUSTOMER_NOTIFICATIONS;
   });
 
-  // --- BUILDER & ADMIN STATE (Clean empty lists for real user data) ---
+  // --- BUILDER & ADMIN STATE (Loaded with verified contractors & client accounts) ---
   const [myProjects, setMyProjects] = useState(() => {
     const saved = localStorage.getItem('buildhub_my_projects_v5');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return BUILDER_MY_PROJECTS;
   });
+
   const [customerRequests, setCustomerRequests] = useState(() => {
-    return [
-      {
-        id: 'req1',
-        customer: 'Ramesh Kumar',
-        location: 'Hyderabad, Telangana',
-        projectType: 'Residential Villa',
-        date: 'Aug 17, 2025',
-        budget: '₹18,00,000',
-        area: '1000 sq.ft',
-        status: 'New',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-        phone: '+91 98765 11223'
-      }
-    ];
+    const saved = localStorage.getItem('buildhub_customer_requests_v5');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return BUILDER_CUSTOMER_REQUESTS;
   });
-  const [myCustomers, setMyCustomers] = useState([]);
-  const [buildersList, setBuildersList] = useState([]);
-  const [workersList, setWorkersList] = useState([]);
+
+  const [myCustomers, setMyCustomers] = useState(() => {
+    const saved = localStorage.getItem('buildhub_customers_v5');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return INITIAL_CUSTOMERS;
+  });
+
+  const [buildersList, setBuildersList] = useState(() => {
+    const saved = localStorage.getItem('buildhub_builders_v5');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return INITIAL_BUILDERS;
+  });
+
+  const [workersList, setWorkersList] = useState(() => {
+    const saved = localStorage.getItem('buildhub_workers_v5');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return INITIAL_WORKERS;
+  });
 
   // --- BUILDER BOOKINGS STATE (Find Builders Module) ---
   const [bookings, setBookings] = useState(() => {
@@ -192,18 +242,36 @@ export function AppProvider({ children }) {
   // --- CONSTRUCTION IMAGES GALLERY & PROGRESS UPDATES ---
   const [constructionImages, setConstructionImages] = useState(() => {
     const saved = localStorage.getItem('buildhub_construction_images_v5');
-    return saved ? JSON.parse(saved) : INITIAL_CONSTRUCTION_IMAGES;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return INITIAL_CONSTRUCTION_IMAGES;
   });
 
   const [progressUpdates, setProgressUpdates] = useState(() => {
     const saved = localStorage.getItem('buildhub_progress_updates_v5');
-    return saved ? JSON.parse(saved) : INITIAL_PROGRESS_UPDATES;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return INITIAL_PROGRESS_UPDATES;
   });
 
   // --- PROJECT DOCUMENTS, BLUEPRINTS, RECEIPTS & BILLS ---
   const [projectDocuments, setProjectDocuments] = useState(() => {
     const saved = localStorage.getItem('buildhub_project_documents_v5');
-    return saved ? JSON.parse(saved) : INITIAL_PROJECT_DOCUMENTS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return INITIAL_PROJECT_DOCUMENTS;
   });
 
   // Modals & Popups
@@ -215,7 +283,7 @@ export function AppProvider({ children }) {
   const [editingItem, setEditingItem] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Wipe old demo localStorage keys once on mount and sanitize conductor name
+  // Wipe old demo localStorage keys once on mount, sanitize conductor name, and ensure demo data is populated
   useEffect(() => {
     const oldDemoKeys = [
       'buildhub_auth_v4', 'buildhub_user_v4', 'buildhub_customer_project',
@@ -233,11 +301,18 @@ export function AppProvider({ children }) {
         parsed.name = parsed.role === 'Customer' ? 'Customer' : (parsed.role || 'Customer');
         localStorage.setItem('buildhub_user_v5', JSON.stringify(parsed));
         setCurrentUser(parsed);
-      } catch (e) {}
+      } catch {}
+    }
+
+    // If customer project is empty or "No Active Project", seed with comprehensive demo project
+    const savedCustProj = localStorage.getItem('buildhub_customer_project_v5');
+    if (!savedCustProj || savedCustProj.includes('"No Active Project"')) {
+      localStorage.setItem('buildhub_customer_project_v5', JSON.stringify(CUSTOMER_PROJECT_DATA));
+      setCustomerProject(CUSTOMER_PROJECT_DATA);
     }
   }, []);
 
-  // Persist clean storage
+  // Persist storage
   useEffect(() => {
     localStorage.setItem('buildhub_auth_v5', JSON.stringify(isAuthenticated));
   }, [isAuthenticated]);
@@ -249,8 +324,52 @@ export function AppProvider({ children }) {
   }, [currentUser]);
 
   useEffect(() => {
+    localStorage.setItem('buildhub_customer_project_v5', JSON.stringify(customerProject));
+  }, [customerProject]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_customer_stages_v5', JSON.stringify(customerStages));
+  }, [customerStages]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_customer_updates_v5', JSON.stringify(customerUpdates));
+  }, [customerUpdates]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_customer_docs_v5', JSON.stringify(customerDocuments));
+  }, [customerDocuments]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_customer_payments_v5', JSON.stringify(customerPayments));
+  }, [customerPayments]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_customer_messages_v5', JSON.stringify(customerMessages));
+  }, [customerMessages]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_customer_notifs_v5', JSON.stringify(customerNotifications));
+  }, [customerNotifications]);
+
+  useEffect(() => {
     localStorage.setItem('buildhub_my_projects_v5', JSON.stringify(myProjects));
   }, [myProjects]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_customers_v5', JSON.stringify(myCustomers));
+  }, [myCustomers]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_builders_v5', JSON.stringify(buildersList));
+  }, [buildersList]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_workers_v5', JSON.stringify(workersList));
+  }, [workersList]);
+
+  useEffect(() => {
+    localStorage.setItem('buildhub_customer_requests_v5', JSON.stringify(customerRequests));
+  }, [customerRequests]);
 
   useEffect(() => {
     localStorage.setItem('buildhub_bookings_v5', JSON.stringify(bookings));
@@ -268,25 +387,63 @@ export function AppProvider({ children }) {
     localStorage.setItem('buildhub_project_documents_v5', JSON.stringify(projectDocuments));
   }, [projectDocuments]);
 
+  // Reset or load complete demo data on demand
+  const resetDemoData = () => {
+    setCustomerProject(CUSTOMER_PROJECT_DATA);
+    setCustomerStages(CUSTOMER_PROGRESS_STAGES);
+    setCustomerUpdates(CUSTOMER_RECENT_UPDATES);
+    setCustomerDocuments(CUSTOMER_DOCUMENTS);
+    setCustomerPayments(CUSTOMER_PAYMENTS);
+    setCustomerMessages(CUSTOMER_CHAT_MESSAGES);
+    setCustomerNotifications(CUSTOMER_NOTIFICATIONS);
+    setMyProjects(BUILDER_MY_PROJECTS);
+    setMyCustomers(INITIAL_CUSTOMERS);
+    setBuildersList(INITIAL_BUILDERS);
+    setWorkersList(INITIAL_WORKERS);
+    setCustomerRequests(BUILDER_CUSTOMER_REQUESTS);
+    setProjectDocuments(INITIAL_PROJECT_DOCUMENTS);
+    setConstructionImages(INITIAL_CONSTRUCTION_IMAGES);
+    setProgressUpdates(INITIAL_PROGRESS_UPDATES);
+
+    localStorage.setItem('buildhub_customer_project_v5', JSON.stringify(CUSTOMER_PROJECT_DATA));
+    localStorage.setItem('buildhub_customer_stages_v5', JSON.stringify(CUSTOMER_PROGRESS_STAGES));
+    localStorage.setItem('buildhub_customer_updates_v5', JSON.stringify(CUSTOMER_RECENT_UPDATES));
+    localStorage.setItem('buildhub_customer_docs_v5', JSON.stringify(CUSTOMER_DOCUMENTS));
+    localStorage.setItem('buildhub_customer_payments_v5', JSON.stringify(CUSTOMER_PAYMENTS));
+    localStorage.setItem('buildhub_customer_messages_v5', JSON.stringify(CUSTOMER_CHAT_MESSAGES));
+    localStorage.setItem('buildhub_customer_notifs_v5', JSON.stringify(CUSTOMER_NOTIFICATIONS));
+    localStorage.setItem('buildhub_my_projects_v5', JSON.stringify(BUILDER_MY_PROJECTS));
+    localStorage.setItem('buildhub_customers_v5', JSON.stringify(INITIAL_CUSTOMERS));
+    localStorage.setItem('buildhub_builders_v5', JSON.stringify(INITIAL_BUILDERS));
+    localStorage.setItem('buildhub_workers_v5', JSON.stringify(INITIAL_WORKERS));
+    localStorage.setItem('buildhub_customer_requests_v5', JSON.stringify(BUILDER_CUSTOMER_REQUESTS));
+    localStorage.setItem('buildhub_project_documents_v5', JSON.stringify(INITIAL_PROJECT_DOCUMENTS));
+    localStorage.setItem('buildhub_construction_images_v5', JSON.stringify(INITIAL_CONSTRUCTION_IMAGES));
+    localStorage.setItem('buildhub_progress_updates_v5', JSON.stringify(INITIAL_PROGRESS_UPDATES));
+  };
+
   // ─── FIREBASE REALTIME SYNC ───
   useEffect(() => {
+    // Seed initial demo data to Firestore if database is empty
+    seedInitialDataIfEmpty().catch(() => {});
+
     // 1. Realtime listener for Firestore projects
     const unsubscribeProjects = subscribeToProjects((remoteProjects) => {
-      if (remoteProjects) {
+      if (remoteProjects && remoteProjects.length > 0) {
         setMyProjects(remoteProjects);
       }
     });
 
     // 2. Realtime listener for all registered Builders (Admin & Directory)
     const unsubscribeBuilders = subscribeToAllBuilders((remoteBuilders) => {
-      if (remoteBuilders) {
+      if (remoteBuilders && remoteBuilders.length > 0) {
         setBuildersList(remoteBuilders);
       }
     });
 
     // 3. Realtime listener for all registered Customers (Admin oversight)
     const unsubscribeCustomers = subscribeToAllCustomers((remoteCustomers) => {
-      if (remoteCustomers) {
+      if (remoteCustomers && remoteCustomers.length > 0) {
         setMyCustomers(remoteCustomers);
       }
     });
@@ -376,7 +533,6 @@ export function AppProvider({ children }) {
 
     const userData = {
       name: resolvedName,
-      role: canonicalRole,
       email: enteredEmail,
       avatar: customData.avatar || (canonicalRole === 'Builder' ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'),
       phone: customData.phone || '',
@@ -429,7 +585,6 @@ export function AppProvider({ children }) {
 
     const userData = {
       name: profile?.name || profile?.fullName || user.displayName || (canonicalRole === 'Builder' ? 'Builder Partner' : 'Customer'),
-      role: canonicalRole,
       email: user.email || profile?.email || '',
       avatar: user.photoURL || profile?.avatar || '',
       phone: profile?.phone || '',
@@ -441,7 +596,7 @@ export function AppProvider({ children }) {
       firebaseUid: user.uid,
       unreadNotifications: 0,
       ...profile,
-      role: canonicalRole // strictly enforce role
+      role: canonicalRole // strictly enforce canonical role
     };
     setCurrentUser(userData);
     setIsAuthenticated(true);
@@ -458,7 +613,6 @@ export function AppProvider({ children }) {
 
     const userData = {
       name: profile?.name || profile?.fullName || user.displayName || (canonicalRole === 'Builder' ? 'Builder Partner' : 'Customer'),
-      role: canonicalRole,
       email: user.email || profile?.email || '',
       avatar: user.photoURL || profile?.avatar || '',
       phone: profile?.phone || '',
@@ -470,7 +624,7 @@ export function AppProvider({ children }) {
       firebaseUid: user.uid,
       unreadNotifications: 0,
       ...profile,
-      role: canonicalRole // strictly enforce role
+      role: canonicalRole // strictly enforce canonical role
     };
     setCurrentUser(userData);
     setIsAuthenticated(true);
@@ -823,7 +977,9 @@ export function AppProvider({ children }) {
         projectDocuments,
         setProjectDocuments,
         uploadProjectDocument,
-        deleteProjectDocument
+        deleteProjectDocument,
+        // Demo Data Control
+        resetDemoData
       }}
     >
       {children}
