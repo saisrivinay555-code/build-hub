@@ -8,10 +8,12 @@ import galleryImg2 from '../assets/construction-gallery-2.png';
 import galleryImg3 from '../assets/construction-gallery-3.png';
 import galleryImg4 from '../assets/construction-gallery-4.png';
 
+export { builderAvatarImg, builderVillaBannerImg, galleryImg1, galleryImg2, galleryImg3, galleryImg4 };
+
 // --- 1. CUSTOMER SPECIFIC DATA (RAMESH KUMAR) ---
 export const CUSTOMER_PROJECT_DATA = {
   id: 'cp_ramesh_1',
-  name: 'Residential Villa',
+  name: 'Dream Villa',
   type: 'Luxury 4BHK Duplex Villa',
   builderName: 'Tech Builders',
   builderContact: '+91 98765 43210',
@@ -23,8 +25,9 @@ export const CUSTOMER_PROJECT_DATA = {
   startDate: '01 Jan 2026',
   expectedCompletion: '30 Aug 2026',
   status: 'Ongoing',
+  healthStatus: 'On Track',
   progress: 72,
-  image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop&q=80',
+  image: builderVillaBannerImg,
   totalCost: '₹20,00,000',
   totalCostNum: 2000000,
   amountPaid: '₹17,60,000',
@@ -291,23 +294,27 @@ export const BUILDER_CUSTOMER_REQUESTS = [
 export const BUILDER_MY_PROJECTS = [
   {
     id: 'bp1',
-    name: 'Residential Villa',
+    name: 'Dream Villa',
     customer: 'Ramesh Kumar',
     location: 'Hyderabad',
     status: 'Ongoing',
+    healthStatus: 'On Track',
     progress: 72,
-    budget: '$450,000',
-    spent: '$324,000',
-    deadline: 'Aug 30, 2025',
+    phase: 'Interior & Finishing',
+    budget: '₹45,00,000',
+    spent: '₹32,40,000',
+    startDate: '01 Jan 2026',
+    deadline: '30 Aug 2026',
+    targetHandover: '30 Aug 2026',
     type: 'Residential',
-    description: 'Contemporary 4BHK smart villa with structural framing completed and interior plastering ongoing.',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&auto=format&fit=crop&q=80',
+    description: 'Modern villa with premium interiors and vastu compliant design.',
+    image: builderVillaBannerImg,
     milestones: [
-      { name: 'Foundation & Earthwork', completed: true, date: 'Feb 10, 2025' },
-      { name: 'RCC Superstructure Slab Casting', completed: true, date: 'Apr 25, 2025' },
-      { name: 'Plumbing & Electrical Rough-ins', completed: true, date: 'Jun 15, 2025' },
-      { name: 'Flooring & Italian Marble Polish', completed: true, date: 'Jul 28, 2025' },
-      { name: 'Fixtures & Final Handover', completed: false, date: 'Aug 30, 2025' }
+      { name: 'Foundation', stage: 'Foundation', completed: true, status: 'Completed', date: '10 Feb 2026' },
+      { name: 'Structure', stage: 'Structure', completed: true, status: 'Completed', date: '25 Apr 2026' },
+      { name: 'Interior & Finishing', stage: 'Interior & Finishing', completed: false, status: 'In Progress', date: 'Target: 15 Jul 2026' },
+      { name: 'Painting', stage: 'Painting', completed: false, status: 'Pending', date: 'Target: 10 Aug 2026' },
+      { name: 'Final Handover', stage: 'Final Handover', completed: false, status: 'Pending', date: 'Target: 30 Aug 2026' }
     ]
   },
   {

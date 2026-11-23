@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
-import { X, UploadCloud, FileText, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, UploadCloud, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import confetti from 'canvas-confetti';
 
-export default function BuilderDocumentUploadModal({ isOpen, onClose }) {
+export default function BuilderDocumentUploadModal({ 
+  isOpen, 
+  onClose, 
+  initialCategory = 'plans', 
+  initialProjectId = null 
+}) {
   const { myProjects, uploadProjectDocument } = useApp();
 
-  const [selectedProjectId, setSelectedProjectId] = useState(myProjects[0]?.id || 'cp_ramesh_1');
-  const [category, setCategory] = useState('plans');
+  const [selectedProjectId, setSelectedProjectId] = useState(initialProjectId || myProjects[0]?.id || 'bp1');
+  const [category, setCategory] = useState(initialCategory || 'plans');
   const [docTitle, setDocTitle] = useState('');
   const [version, setVersion] = useState('Version 1.0');
   const [amount, setAmount] = useState('');
@@ -16,6 +21,13 @@ export default function BuilderDocumentUploadModal({ isOpen, onClose }) {
   const [filePreview, setFilePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialCategory) setCategory(initialCategory);
+      if (initialProjectId) setSelectedProjectId(initialProjectId);
+    }
+  }, [isOpen, initialCategory, initialProjectId]);
 
   if (!isOpen) return null;
 
@@ -161,6 +173,60 @@ export default function BuilderDocumentUploadModal({ isOpen, onClose }) {
                 placeholder="e.g. Electrical Conduit Plan or Foundation Raft"
                 className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-[#101D3A] font-semibold focus:outline-none focus:border-[#7428E8]"
               />
+              {/* Quick Presets */}
+              <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
+                {category === 'plans' && [
+                  'Floor Plan', 'Elevation Plan', 'Structural Plan', 'Site Layout Plan', 
+                  'Foundation Plan', 'Electrical Layout', 'Plumbing Layout', 'Interior Layout'
+                ].map(preset => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setDocTitle(preset)}
+                    className="px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-purple-50 text-[#7428E8] hover:bg-purple-100 transition cursor-pointer"
+                  >
+                    + {preset}
+                  </button>
+                ))}
+                {category === 'receipts' && [
+                  'Advance Payment Receipt', 'Customer Payment Receipt', 
+                  'Material Purchase Receipt', 'Labour Payment Receipt', 'Equipment Purchase Receipt'
+                ].map(preset => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setDocTitle(preset)}
+                    className="px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition cursor-pointer"
+                  >
+                    + {preset}
+                  </button>
+                ))}
+                {category === 'bills' && [
+                  'Construction Quotation', 'Material Cost Breakdown', 
+                  'Labour Cost Breakdown', 'Additional Expenses', 'Stage Bill', 'Final Project Invoice'
+                ].map(preset => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setDocTitle(preset)}
+                    className="px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition cursor-pointer"
+                  >
+                    + {preset}
+                  </button>
+                ))}
+                {category === 'other' && [
+                  'Municipal Approval', 'Building Permit', 'Land Documents', 'Quality Test Report'
+                ].map(preset => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => setDocTitle(preset)}
+                    className="px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-amber-50 text-amber-700 hover:bg-amber-100 transition cursor-pointer"
+                  >
+                    + {preset}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Version & Amount Row */}

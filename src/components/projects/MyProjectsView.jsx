@@ -3,22 +3,31 @@ import {
   FolderKanban, 
   Plus, 
   Search, 
-  Calendar, 
   MapPin, 
-  User, 
-  CheckCircle2, 
-  ChevronRight,
-  TrendingUp,
-  Clock
+  ChevronRight
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export default function MyProjectsView() {
-  const { myProjects, setModalType, setSelectedProjectForDetail } = useApp();
+  const { 
+    myProjects, 
+    setModalType, 
+    setSelectedBuilderProjectId,
+    setCurrentTab
+  } = useApp();
   const [filterStatus, setFilterStatus] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
   const statuses = ['All', 'Ongoing', 'Completed', 'Upcoming'];
+
+  const handleOpenProject = (project) => {
+    if (setSelectedBuilderProjectId) {
+      setSelectedBuilderProjectId(project.id);
+    }
+    if (setCurrentTab) {
+      setCurrentTab('project-progress');
+    }
+  };
 
   const filtered = (myProjects || []).filter(p => {
     const matchesStatus = filterStatus === 'All' || p.status === filterStatus;
@@ -91,7 +100,7 @@ export default function MyProjectsView() {
         {filtered.map((project) => (
           <div
             key={project.id}
-            onClick={() => setSelectedProjectForDetail(project)}
+            onClick={() => handleOpenProject(project)}
             className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-xs hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between group"
           >
             <div>
@@ -164,12 +173,19 @@ export default function MyProjectsView() {
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between text-xs">
-              <span className="font-bold text-blue-600 group-hover:underline flex items-center gap-1">
-                <span>View Milestones</span>
-                <ChevronRight size={14} />
-              </span>
+            <div className="px-5 py-3.5 bg-gray-50/80 border-t border-gray-100 flex items-center justify-between text-xs">
               <span className="font-mono font-bold text-gray-800">{project.budget}</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenProject(project);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#7428E8] hover:bg-[#6415C5] text-white text-xs font-bold transition shadow-xs hover:shadow-md cursor-pointer"
+              >
+                <span>View Project Details</span>
+                <ChevronRight size={14} />
+              </button>
             </div>
           </div>
         ))}

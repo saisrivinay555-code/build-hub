@@ -15,7 +15,9 @@ import {
   CHART_MONTHLY_OVERVIEW,
   FIND_BUILDERS_DATA,
   INITIAL_CONSTRUCTION_IMAGES,
-  INITIAL_PROGRESS_UPDATES
+  INITIAL_PROGRESS_UPDATES,
+  builderVillaBannerImg,
+  builderAvatarImg
 } from '../data/initialData';
 import { 
   signInAsDemoRole, 
@@ -183,11 +185,47 @@ export function AppProvider({ children }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Ensure bp1 (Dream Villa) aligns with the latest detailed milestones schema
+          return parsed.map(p => {
+            if (p.id === 'bp1' && (p.name === 'Residential Villa' || !p.healthStatus)) {
+              return {
+                ...p,
+                name: 'Dream Villa',
+                healthStatus: 'On Track',
+                phase: 'Interior & Finishing',
+                startDate: '01 Jan 2026',
+                targetHandover: '30 Aug 2026',
+                deadline: '30 Aug 2026',
+                image: builderVillaBannerImg,
+                description: 'Modern villa with premium interiors and vastu compliant design.',
+                milestones: [
+                  { name: 'Foundation', stage: 'Foundation', completed: true, status: 'Completed', date: '10 Feb 2026' },
+                  { name: 'Structure', stage: 'Structure', completed: true, status: 'Completed', date: '25 Apr 2026' },
+                  { name: 'Interior & Finishing', stage: 'Interior & Finishing', completed: false, status: 'In Progress', date: 'Target: 15 Jul 2026' },
+                  { name: 'Painting', stage: 'Painting', completed: false, status: 'Pending', date: 'Target: 10 Aug 2026' },
+                  { name: 'Final Handover', stage: 'Final Handover', completed: false, status: 'Pending', date: 'Target: 30 Aug 2026' }
+                ]
+              };
+            }
+            return p;
+          });
+        }
       } catch {}
     }
     return BUILDER_MY_PROJECTS;
   });
+
+  // Selected project for Builder details view workspace
+  const [selectedBuilderProjectId, setSelectedBuilderProjectId] = useState(() => {
+    return localStorage.getItem('buildhub_selected_builder_project_id') || 'bp1';
+  });
+
+  useEffect(() => {
+    if (selectedBuilderProjectId) {
+      localStorage.setItem('buildhub_selected_builder_project_id', selectedBuilderProjectId);
+    }
+  }, [selectedBuilderProjectId]);
 
   const [customerRequests, setCustomerRequests] = useState(() => {
     const saved = localStorage.getItem('buildhub_customer_requests_v5');
@@ -704,6 +742,51 @@ export function AppProvider({ children }) {
     updateProjectProgressInDb(id, newProgress).catch(() => {});
   };
 
+  const toggleProjectMilestone = (projectId, milestoneIdx) => {
+    setMyProjects(prev => prev.map(p => {
+      if (p.id === projectId && Array.isArray(p.milestones)) {
+        const updatedMilestones = p.milestones.map((m, idx) => {
+          if (idx === milestoneIdx) {
+            const nextCompleted = !m.completed;
+            return {
+              ...m,
+              completed: nextCompleted,
+              status: nextCompleted ? 'Completed' : (idx === 2 ? 'In Progress' : 'Pending')
+            };
+          }
+          return m;
+        });
+        const completedCount = updatedMilestones.filter(m => m.completed).length;
+        const newProgress = Math.round((completedCount / updatedMilestones.length) * 100);
+        return { ...p, milestones: updatedMilestones, progress: newProgress };
+      }
+      return p;
+    }));
+  };
+
+  const addProgressUpdate = async (updateData) => {
+    const builderName = currentUser?.name || currentUser?.company || 'Tech Builders';
+    const newUpdate = {
+      id: 'pup_' + Date.now(),
+      projectId: updateData.projectId || selectedBuilderProjectId || 'bp1',
+      builderId: currentUser?.uid || 'b-tech',
+      builderName,
+      builderAvatar: currentUser?.avatar || builderAvatarImg,
+      stage: updateData.stage || 'Interior & Finishing',
+      title: updateData.title || `${updateData.stage || 'Interior & Finishing'} Stage Update`,
+      description: updateData.description || '',
+      progressPercentage: updateData.progressPercentage !== undefined ? Number(updateData.progressPercentage) : 72,
+      date: updateData.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+      time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      images: updateData.images || []
+    };
+    setProgressUpdates(prev => [newUpdate, ...prev]);
+    saveProgressUpdateToFirestore(newUpdate).catch(err => {
+      console.warn('Firestore progress update save notice:', err);
+    });
+    return newUpdate;
+  };
+
   const updateCustomerRequestStatus = (id, newStatus) => {
     setCustomerRequests(customerRequests.map(r => r.id === id ? { ...r, status: newStatus } : r));
     // Also update any matching booking
@@ -929,6 +1012,9 @@ export function AppProvider({ children }) {
         updateCustomerProfile,
         // Builder & Admin Data
         myProjects,
+        setMyProjects,
+        selectedBuilderProjectId,
+        setSelectedBuilderProjectId,
         customerRequests,
         myCustomers,
         buildersList,
@@ -958,6 +1044,8 @@ export function AppProvider({ children }) {
         addProject,
         addCustomer,
         updateProjectProgress,
+        toggleProjectMilestone,
+        addProgressUpdate,
         updateCustomerRequestStatus,
         updateBuilderApprovalStatus: updateBuilderApproval,
         updateCustomerAccountStatus: updateCustomerStatus,
